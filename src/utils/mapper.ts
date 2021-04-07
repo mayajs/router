@@ -49,11 +49,11 @@ const mapModules: ModuleMapperFactory = (router, app, parentModule = null): Modu
 };
 
 const declarationsMapper = (_module: ParentModule, name: string = ""): boolean => {
-  let isDeclared = false;
+  let isDeclared = _module?.declarations !== undefined;
 
-  if (_module) isDeclared = _module.declarations.some((item) => item.name === name);
+  if (_module && _module?.declarations) isDeclared = _module.declarations.some((item) => item.name === name);
 
-  if (!isDeclared && _module !== null) return declarationsMapper(_module.parent, name);
+  if (!isDeclared && _module !== null && _module?.parent) return declarationsMapper(_module.parent, name);
 
   return isDeclared;
 };
@@ -70,10 +70,14 @@ const routeMapper: RouterMapperFactory = (router, app, _module = null): RouterMa
     if (_module !== null) _module.path = route.path;
 
     const controllerName = route?.controller?.name;
-    const moduleName = _module?.constructor.name;
-    const isDeclared = declarationsMapper(_module, controllerName);
+    let isDeclared = true;
 
-    if (!isDeclared && _module !== null) {
+    if (controllerName && _module !== null) {
+      isDeclared = declarationsMapper(_module, controllerName);
+    }
+
+    if (!isDeclared) {
+      const moduleName = _module?.constructor.name;
       throw new Error(`${controllerName} is not declared in ${moduleName}`);
     }
 
@@ -98,7 +102,7 @@ const routeMapper: RouterMapperFactory = (router, app, _module = null): RouterMa
 
     if (route?.loadChildren) {
       route
-        ?.loadChildren()
+        .loadChildren()
         .then(mapModules(router, app, _module ?? { path: route.path }))
         .catch((error) => console.log(error));
     }
