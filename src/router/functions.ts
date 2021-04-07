@@ -33,7 +33,7 @@ router.addRouteToList = function (route, _module) {
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
 
   if (route.controller && route.hasOwnProperty("controller")) {
-    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies);
+    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
     const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as MethodNames[];
     const routes = (controller as any)["routes"];
