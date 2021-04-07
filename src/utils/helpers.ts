@@ -56,7 +56,7 @@ export function mapDependencies(routerDep: RouterDependencies, _module?: ParentM
         if (promitives.includes(name)) return undefined;
         const dependency = findDependency(name, routerDep, props, _module);
         if (!dependency) {
-          logger.red(`${name} is not provided properly in ${_module?.constructor?.name}.`);
+          logger.red(`${name} is not provided properly in a module.`);
           throw new Error();
         }
         return dependency;
