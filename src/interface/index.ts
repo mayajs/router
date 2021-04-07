@@ -141,8 +141,9 @@ export abstract class Services {}
 /**
  * An abstract class that define all the methods for a single route
  */
-export class Controller {
+export class MayaJsController {
   middlewares: Partial<ControllerMiddleware> = {};
+  routes: any[] = [];
   GET(ctx: MayaJsContext): Promise<any> | any {}
   POST(ctx: MayaJsContext): Promise<any> | any {}
   DELETE(ctx: MayaJsContext): Promise<any> | any {}
@@ -154,7 +155,7 @@ export class Controller {
 
 export type ModuleProviders = Type<any>[];
 export type ModuleCustomType = Type<CustomModule | MayaJsModule>;
-export type ControllerType = Type<Controller>;
+export type ControllerType = Type<MayaJsController>;
 export type ModuleImports = ModuleCustomType | ModuleWithProviders;
 
 export interface ModuleWithProviders extends ModuleWithProvidersProps {
