@@ -4,6 +4,7 @@ import app from "./router";
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
 export interface MayaMiddlewares extends MayaJsMiddleware {}
 export * from "./interface";
+export * from "./utils/constants";
 
 /**
  * A Nodejs library for managing routes. MayaJs use a declarative way of defining routes.
