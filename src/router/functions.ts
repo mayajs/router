@@ -1,5 +1,6 @@
-import { MethodNames, RouteCallback, RouteMethod, RouterMethods, RouterProps, RouterFunction, MayaJSRouteParams } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, RouterFunction, MayaJSRouteParams } from "../interface";
 import { mapDependencies, sanitizePath } from "../utils/helpers";
+import { RequestMethod, RouteCallback } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
@@ -27,7 +28,7 @@ router.addRouteToList = function (route, _module) {
   if (!this[list][path]) this[list][path] = {} as any;
 
   // Set route to list with path as a key
-  const setList = (key: MethodNames, options: MayaJSRouteParams) => (this[list][path][key] = options);
+  const setList = (key: RequestMethod, options: MayaJSRouteParams) => (this[list][path][key] = options);
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
@@ -35,7 +36,7 @@ router.addRouteToList = function (route, _module) {
   if (route.controller && route.hasOwnProperty("controller")) {
     const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
-    const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as MethodNames[];
+    const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = (controller as any)["routes"];
 
     routes.map(({ middlewares, methodName, path: routePath, requestMethod }: any) => {
@@ -49,7 +50,7 @@ router.addRouteToList = function (route, _module) {
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
     });
 
-    controllerProps.map((key: MethodNames) => {
+    controllerProps.map((key: RequestMethod) => {
       if (methods.includes(key)) {
         let middlewares = controller?.middlewares?.[key] ?? [];
 
@@ -63,7 +64,7 @@ router.addRouteToList = function (route, _module) {
   }
 
   if (!route?.controller) {
-    (Object.keys(route) as MethodNames[]).map((key): void => {
+    (Object.keys(route) as RequestMethod[]).map((key): void => {
       if (methods.includes(key) && route.hasOwnProperty("controller")) {
         throw new Error(`Property controller can't be used with ${key} method on route '${path}'`);
       }
