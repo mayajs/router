@@ -1,6 +1,6 @@
-import { RouteMethod, RouterMethods, RouterProps, RouterFunction, MayaJSRouteParams } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJSRouteParams } from "../interface";
 import { mapDependencies, sanitizePath } from "../utils/helpers";
-import { RequestMethod, RouteCallback } from "../types";
+import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
