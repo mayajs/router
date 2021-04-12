@@ -1,5 +1,5 @@
-import { RouterDependencies, RouterProps, RouterMapper, Type } from "../interface";
-import { ModuleProviders, ParentModule } from "../types";
+import { RouterDependencies, RouterProps, Type } from "../interface";
+import { ModuleProviders, ParentModule, RouterMapper } from "../types";
 import merge from "./merge";
 
 // We use '+' instead of template string '${}' because of performance gain

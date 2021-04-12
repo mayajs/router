@@ -1,5 +1,5 @@
-import { MayaJsRouter, MayaJsRoute, RouterMapper } from "./interface";
-import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
+import { MayaJsRouter, MayaJsRoute } from "./interface";
+import { ExpressJsMiddleware, MayaJsMiddleware, RouterMapper } from "./types";
 import { CustomModule, RoutesMapper } from "./class";
 import app from "./router";
 

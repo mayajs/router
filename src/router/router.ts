@@ -1,5 +1,5 @@
-import { MayaRouter, ResponseSender, RouterFunction, RouterMapper, VisitedRoutes } from "../interface";
-import { RequestMethod } from "../types";
+import { MayaRouter, VisitedRoutes } from "../interface";
+import { RequestMethod, ResponseSender, RouterFunction, RouterMapper } from "../types";
 import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
 import functions from "./functions";
