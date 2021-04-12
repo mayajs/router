@@ -1,4 +1,5 @@
-import { MayaRouter, MethodNames, ResponseSender, RouterFunction, RouterMapper, VisitedRoutes } from "../interface";
+import { MayaRouter, ResponseSender, RouterFunction, RouterMapper, VisitedRoutes } from "../interface";
+import { RequestMethod } from "../types";
 import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
 import functions from "./functions";
@@ -46,7 +47,7 @@ app.use = function (middleware) {
 // Sends a reponse message and ending the request
 const send: ResponseSender = async (req, res, parsedUrl) => {
   // Get current method
-  const method = req.method as MethodNames;
+  const method = req.method as RequestMethod;
 
   // Get path name
   let routePath = parsedUrl.pathname;
