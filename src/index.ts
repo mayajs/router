@@ -1,9 +1,13 @@
-import { MayaJsRouter, ExpressJsMiddleware, MayaJsMiddleware, CustomModule, MayaJsRoute, RouterMapper } from "./interface";
+import { MayaJsRouter, MayaJsRoute, RouterMapper } from "./interface";
+import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
+import { CustomModule, RoutesMapper } from "./class";
 import app from "./router";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
 export interface MayaMiddlewares extends MayaJsMiddleware {}
 export * from "./interface";
+export * from "./types";
+export * from "./class";
 export * from "./utils/constants";
 
 /**
@@ -39,8 +43,6 @@ function maya(): MayaJsRouter {
   // Return MayaJs router
   return app;
 }
-
-export class RoutesMapper {}
 
 export class RouterModule extends CustomModule {
   static routes: MayaJsRoute[] = [];
