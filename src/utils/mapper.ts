@@ -1,14 +1,6 @@
-import {
-  CustomModule,
-  ModuleCustomType,
-  ModuleMapper,
-  ModuleMapperFactory,
-  ModuleWithProviders,
-  ModuleWithProvidersProps,
-  ParentModule,
-  RouterMapper,
-  RouterMapperFactory,
-} from "../interface";
+import { CustomModule } from "../class";
+import { ModuleMapper, ModuleMapperFactory, ModuleWithProviders, ModuleWithProvidersProps, RouterMapper, RouterMapperFactory } from "../interface";
+import { ModuleCustomType, ParentModule } from "../types";
 import { dependencyMapperFactory, logger, sanitizePath } from "./helpers";
 
 const mapModules: ModuleMapperFactory = (router, app, parentModule = null): ModuleMapper => (imported) => {
