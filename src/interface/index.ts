@@ -1,5 +1,5 @@
 import { CustomModule, Services } from "../class";
-import http from "http";
+import http, { IncomingHttpHeaders } from "http";
 import {
   Callback,
   RequestMethod,
@@ -110,6 +110,7 @@ export interface QueryParams {
   query: { [x: string]: string | string[] };
   params: { [x: string]: string };
   body: any;
+  file: any;
 }
 
 export interface MiddlewareContext {
@@ -119,6 +120,12 @@ export interface MiddlewareContext {
 }
 
 export interface MayaJsContext extends MiddlewareContext, QueryParams {}
+
+export interface RouterContext extends MayaJsContext {
+  path: string;
+  headers: IncomingHttpHeaders;
+  method: RequestMethod;
+}
 
 export interface Route {
   /**
