@@ -8,6 +8,7 @@ import {
   MayaRouter,
   ModuleProperty,
   ModuleWithProviders,
+  RouterContext,
   RouterDependencies,
   RouterMethods,
   RouterProps,
@@ -61,7 +62,7 @@ export type ControllerMiddleware = {
   [key in RequestMethod]: Middlewares[];
 };
 
-export type ResponseSender = (req: MayaJsRequest, res: MayaJsResponse, parsedUrl: any) => Promise<void>;
+export type ResponseSender = (context: RouterContext) => Promise<void>;
 
 export type MayaJsNextfunction = (error?: any) => Promise<void> | void;
 
