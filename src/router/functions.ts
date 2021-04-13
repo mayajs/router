@@ -16,7 +16,7 @@ const router: RouterMethods = {
 
 router.addRouteToList = function (route, _module) {
   // Sanitize current route path
-  const path = route.path;
+  const path = route.path.replace(/^\/+|\/+$/g, "");
 
   // Check if path has params
   const hasParams = path.includes("/:");
@@ -135,7 +135,7 @@ router.executeRoute = async function (path, route) {
 
     if (!this.visitedRoutes[path][route.method]) {
       // Cache path route if not on visited routes
-      this.visitedRoutes[path][route.method] = { ...route, params: context.params, query: context.query, body: context.body };
+      this.visitedRoutes[path][route.method] = { ...route, ...context };
     }
   } catch (error) {
     // Catch error when running callback
