@@ -1,5 +1,5 @@
-import { MayaRouter, VisitedRoutes } from "../interface";
-import { RequestMethod, ResponseSender, RouterFunction, RouterMapper } from "../types";
+import { MayaRouter, RouterContext, VisitedRoutes } from "../interface";
+import { ResponseSender, RouterFunction, RouterMapper } from "../types";
 import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
 import functions from "./functions";
@@ -45,35 +45,29 @@ app.use = function (middleware) {
 };
 
 // Sends a reponse message and ending the request
-const send: ResponseSender = async (req, res, parsedUrl) => {
-  // Get current method
-  const method = req.method as RequestMethod;
-
-  // Get path name
-  let routePath = parsedUrl.pathname;
-
-  // Remove "/" on the end of the route path
-  if (routePath.endsWith("/")) routePath = routePath.slice(0, -1);
+const send: ResponseSender = async (context: RouterContext) => {
+  // Get method, path and res in context object
+  const { method, path, res } = context;
 
   // Check if path exist in visited routes or in non-param routes
-  const route = router.visitedRoute(routePath, method) || router.findRoute(routePath, method);
+  const route = router.visitedRoute(path, method) || router.findRoute(path, method);
 
   if (!route) {
     // Route was not found. Send back an error message
-    return res.send({ message: `${method}: '${routePath}' was not found!` }, 404);
+    return res.send({ message: `${method}: '${path}' was not found!` }, 404);
   }
 
   try {
     Object.keys(app.headers).map((key) => res.setHeader(key, app.headers[key]));
 
     // Create MayaJS params
-    const params = (route as VisitedRoutes).params || { ...route.regex.exec(routePath)?.groups };
+    const params = (route as VisitedRoutes).params || { ...route.regex.exec(path)?.groups };
 
     // Create MayaJS context
-    router.context = { req, res, query: { ...parsedUrl.query }, params, body: req?.body };
+    router.context = { ...context, params };
 
     // Create a factory method for executing current route
-    const execute = async () => res.send(await router.executeRoute(routePath, route));
+    const execute = async () => res.send(await router.executeRoute(path, route));
 
     const middlewares = route.middlewares !== undefined ? route.middlewares : [];
 
