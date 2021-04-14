@@ -68,7 +68,7 @@ export type MayaJsNextfunction = (error?: any) => Promise<void> | void;
 
 export type RouterFunction = RouterProps & RouterMethods;
 
-export type RouterMapper = (parent?: string) => (route: MayaJsRoute) => void;
+export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: MayaJsRoute) => void;
 
 export type RouterMapperFactory = (router: RouterFunction, app: MayaRouter, _module?: CustomModule | null) => RouterMapper;
 
@@ -76,7 +76,7 @@ export type ModuleMapper = (imported: ModuleImports) => void;
 
 export type ParentModule = CustomModule | MayaJsModule | null;
 
-export type ModuleMapperFactory = (router: RouterFunction, app: MayaRouter, parentModule?: ParentModule | { path: string }) => ModuleMapper;
+export type ModuleMapperFactory = (router: RouterFunction, parentModule?: ParentModule | { path: string }) => ModuleMapper;
 
 export type FindDependency = (name: string, dependencies: RouterDependencies) => void;
 
