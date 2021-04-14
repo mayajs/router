@@ -27,7 +27,7 @@ export const mapModules: ModuleMapperFactory = (router, parentModule = null): Mo
   if (parentModule) _module.parent = parentModule as CustomModule;
   if (isCustomModule) (_module as CustomModule).invoke();
 
-  _module.imports.map(mapModules(router, _module));
+  currentModule.imports.map(mapModules(router, currentModule));
 };
 
 export const declarationsMapper = (_module: ParentModule, name: string = ""): boolean => {
