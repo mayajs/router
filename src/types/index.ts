@@ -1,4 +1,4 @@
-import { CustomModule, MayaJsController, MayaJsModule } from "../class";
+import { CustomModule, MayaJsController, MayaJsModule, Services } from "../class";
 import { MODULE_CONSTANTS } from "../utils/constants";
 import {
   MayaJsContext,
@@ -48,7 +48,7 @@ export type ControllerType = Type<MayaJsController>;
 
 export type ModuleCustomType = Type<CustomModule | MayaJsModule>;
 
-export type ModuleProviders = Type<any>[];
+export type ModuleProviders = Type<Services>[];
 
 export type ModuleImports = ModuleCustomType | ModuleWithProviders;
 
