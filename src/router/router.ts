@@ -1,6 +1,6 @@
 import { MayaRouter, RouterContext, VisitedRoutes } from "../interface";
-import { ResponseSender, RouterFunction, RouterMapper } from "../types";
-import routeMapper from "../utils/mapper";
+import { ResponseSender } from "../types";
+// import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
 import functions from "./functions";
 
@@ -11,36 +11,39 @@ export const props = {
   middlewares: [],
   context: {},
   dependencies: {
-    RoutesMapper: routeMapper,
+    // RoutesMapper: routeMapper,
   },
 };
 
-const app: MayaRouter = { init: () => {}, use: (middleware) => app, add: (routes) => {}, headers: { "X-Powered-By": "MayaJS" }, ...props };
-
-let router: RouterFunction;
-let mapRoutes: RouterMapper;
+const app: MayaRouter = {
+  init: () => {},
+  use: (middleware) => app,
+  add: (routes) => {},
+  headers: { "X-Powered-By": "MayaJS" },
+  router: functions(props),
+  ...props,
+};
 
 app.add = function (routes) {
   // Check if routes is an array
-  if (!Array.isArray(routes)) return router.addRouteToList(routes);
+  if (!Array.isArray(routes)) return this.router.addRouteToList(routes);
 
   // Map routes and add each route to the list
-  routes.map(mapRoutes());
+  routes.map(this.router.mapper());
 };
 
 app.init = function () {
+  // Destructure RouterProps
   const { routes, routesWithParams, visitedRoutes, middlewares, context, dependencies } = app;
 
   // Initialize mayajs router
-  router = functions({ routes, routesWithParams, visitedRoutes, middlewares, context, dependencies });
-  mapRoutes = routeMapper(router, app);
+  this.router = functions({ routes, routesWithParams, visitedRoutes, middlewares, context, dependencies });
 };
 
 app.use = function (middleware) {
   // Add middleware to the list
-  if (middleware) {
-    router.middlewares.push(middleware);
-  }
+  if (middleware) this.router.middlewares.push(middleware);
+
   return this;
 };
 
@@ -50,7 +53,7 @@ const send: ResponseSender = async (context: RouterContext) => {
   const { method, path, res } = context;
 
   // Check if path exist in visited routes or in non-param routes
-  const route = router.visitedRoute(path, method) || router.findRoute(path, method);
+  const route = app.router.visitedRoute(path, method) || app.router.findRoute(path, method);
 
   if (!route) {
     // Route was not found. Send back an error message
@@ -64,20 +67,20 @@ const send: ResponseSender = async (context: RouterContext) => {
     const params = (route as VisitedRoutes).params || { ...route.regex.exec(path)?.groups };
 
     // Create MayaJS context
-    router.context = { ...context, params };
+    app.router.context = { ...context, params };
 
     // Create a factory method for executing current route
-    const execute = async () => res.send(await router.executeRoute(path, route));
+    const execute = async () => res.send(await app.router.executeRoute(path, route));
 
     const middlewares = route.middlewares !== undefined ? route.middlewares : [];
 
     // Run middlewares before calling the main route callback
-    middleware([...router.middlewares, ...middlewares], router.context, execute);
+    middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
   } catch (error) {
     // Send error back to client
     res.send(error);
   }
 };
 
-// Create mayajs router by merging the handler and functions
+// Export app instance and send function
 export { app, send };
