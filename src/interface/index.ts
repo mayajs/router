@@ -10,6 +10,8 @@ import {
   ControllerType,
   RouteCallback,
   RouteCallbackFunction,
+  RouterMapper,
+  RouterFunction,
 } from "../types";
 
 export interface RouterFunctions {
@@ -91,6 +93,7 @@ export interface RouterHelperMethod {
   findRoute: (path: string, method: RequestMethod) => MayaJSRouteParams | null;
   executeRoute: (path: string, route: MayaJSRouteParams) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
+  mapper: RouterMapper;
 }
 
 export interface RouterProps {
@@ -104,7 +107,9 @@ export interface RouterProps {
 
 export interface RouterMethods extends RouterHelperMethod, RouterProps {}
 
-export interface MayaRouter extends RouterFunctions, RouterProps {}
+export interface MayaRouter extends RouterFunctions, RouterProps {
+  router: RouterFunction;
+}
 
 export interface QueryParams {
   query: { [x: string]: string | string[] };
