@@ -1,8 +1,10 @@
 import { MayaJsContext, ModuleWithProviders } from "../interface";
 import { ControllerMiddleware, ControllerType, ModuleCustomType, ModuleImports, ModuleProviders, ParentModule } from "../types";
 
-export abstract class Services {}
-export class RoutesMapper {}
+export abstract class Services {
+  __injectable__ = true;
+  dependencies: any[] = [];
+}
 
 export abstract class MayaJsModule {
   declarations: ControllerType[] = [];
