@@ -1,5 +1,5 @@
 import { RouterDependencies, RouterProps, Type } from "../interface";
-import { ModuleProviders, ParentModule, RouterMapper } from "../types";
+import { ModuleProviders, ParentModule } from "../types";
 import merge from "./merge";
 
 // We use '+' instead of template string '${}' because of performance gain
@@ -37,7 +37,6 @@ const mapProviders = (name: string, _module?: ParentModule): undefined | ModuleP
 };
 
 const findDependency = (name: string, dependencies: RouterDependencies, props: RouterProps, _module?: ParentModule) => {
-  if (dependencies[name] && name === "RoutesMapper") return (dependencies[name] as (...args: any) => RouterMapper)(props, props, _module);
   if (dependencies[name]) return dependencies[name];
 
   const provider = mapProviders(name, _module) as Type<ModuleProviders>;
