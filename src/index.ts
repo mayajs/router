@@ -1,6 +1,6 @@
 import { MayaJsRouter, MayaJsRoute } from "./interface";
-import { ExpressJsMiddleware, MayaJsMiddleware, RouterMapper } from "./types";
-import { CustomModule, RoutesMapper } from "./class";
+import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
+import { CustomModule } from "./class";
 import app from "./router";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
@@ -48,22 +48,18 @@ export class RouterModule extends CustomModule {
   static routes: MayaJsRoute[] = [];
   static isRoot = false;
 
-  constructor(private mapper: RouterMapper, private parentName: string = "") {
-    super();
-  }
-
   invoke() {
     if (!RouterModule.isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
 
-    RouterModule.routes.map(this.mapper(this.parentName));
+    RouterModule.routes.map(app.router.mapper(this?.parent?.path || "", this?.parent as CustomModule));
   }
 
   static forRoot(routes: MayaJsRoute[]) {
     RouterModule.isRoot = true;
     RouterModule.routes = routes;
-    return { module: RouterModule, providers: [], dependencies: [RoutesMapper, String] };
+    return { module: RouterModule, providers: [] };
   }
 }
 
