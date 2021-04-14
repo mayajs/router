@@ -1,9 +1,10 @@
 import { RouteMethod, RouterMethods, RouterProps, MayaJSRouteParams } from "../interface";
-import { mapDependencies, sanitizePath } from "../utils/helpers";
+import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
+import { declarationsMapper, mapModules } from "../utils/mapper";
 
 // Export default route object
 const router: RouterMethods = {
@@ -11,6 +12,7 @@ const router: RouterMethods = {
   findRoute: (path, method) => null,
   executeRoute: (path, route) => Promise.resolve(),
   visitedRoute: (path, method) => null,
+  mapper: (path, method) => (route) => {},
   ...props,
 };
 
@@ -149,4 +151,56 @@ router.visitedRoute = function (path, method) {
   return this?.visitedRoutes && this?.visitedRoutes[path] && this?.visitedRoutes[path][method] ? this?.visitedRoutes[path][method] : null;
 };
 
-export default (app: RouterProps): RouterFunction => merge(app, router as RouterMethods);
+router.mapper = function (parent = "", _module = null) {
+  const _this = this;
+
+  return (route) => {
+    // Create parent route
+    parent = parent.length > 0 ? sanitizePath(parent) : "";
+
+    // Sanitize route path
+    route.path = parent + sanitizePath(route.path);
+
+    if (_module !== null) _module.path = route.path;
+
+    const controllerName = route?.controller?.name;
+    let isDeclared = true;
+
+    if (controllerName && _module !== null) {
+      isDeclared = declarationsMapper(_module, controllerName);
+    }
+
+    if (!isDeclared) {
+      const moduleName = _module?.constructor.name;
+      throw new Error(`${controllerName} is not declared in ${moduleName}`);
+    }
+
+    // Add route to list
+    _this.addRouteToList(route, _module);
+
+    if (route?.children !== undefined && route?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'children' in route '${route.path}'`);
+      throw new Error();
+    }
+
+    if (route?.controller !== undefined && route?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'controller' in route '${route.path}'`);
+      throw new Error();
+    }
+
+    // Check if route has children
+    if (route?.children && route?.children.length > 0) {
+      // Map children's routes
+      route.children.map(_this.mapper(route.path));
+    }
+
+    if (route?.loadChildren) {
+      route
+        .loadChildren()
+        .then(mapModules(_this, _module ?? { path: route.path }))
+        .catch((error) => console.log(error));
+    }
+  };
+};
+
+export default (app: RouterProps): RouterFunction => merge(app, router);
