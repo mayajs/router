@@ -166,13 +166,14 @@ router.mapper = function (parent = "", _module = null) {
     const controllerName = route?.controller?.name;
     let isDeclared = true;
 
-    if (controllerName && _module !== null) {
-      isDeclared = declarationsMapper(_module, controllerName);
-    }
+    // Check if controller is declared on a module
+    if (controllerName && _module !== null) isDeclared = declarationsMapper(_module, controllerName);
 
+    // Throw error if controller is not declared in a module
     if (!isDeclared) {
       const moduleName = _module?.constructor.name;
-      throw new Error(`${controllerName} is not declared in ${moduleName}`);
+      logger.red(`${controllerName} is not declared in ${moduleName}`);
+      throw new Error();
     }
 
     // Add route to list
@@ -189,11 +190,9 @@ router.mapper = function (parent = "", _module = null) {
     }
 
     // Check if route has children
-    if (route?.children && route?.children.length > 0) {
-      // Map children's routes
-      route.children.map(_this.mapper(route.path));
-    }
+    if (route?.children && route?.children.length > 0) route.children.map(_this.mapper(route.path));
 
+    // Load all children asynchronously
     if (route?.loadChildren) {
       route
         .loadChildren()
