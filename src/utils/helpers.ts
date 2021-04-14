@@ -1,6 +1,5 @@
 import { RouterDependencies, RouterProps, Type } from "../interface";
 import { ModuleProviders, ParentModule } from "../types";
-import merge from "./merge";
 
 // We use '+' instead of template string '${}' because of performance gain
 // See https://stackoverflow.com/questions/6094117/prepend-text-to-beginning-of-string
@@ -63,5 +62,3 @@ export function mapDependencies(routerDep: RouterDependencies, _module?: ParentM
       })
     : [];
 }
-
-export const dependencyMapperFactory = (app: RouterProps) => merge(mapDependencies, app);

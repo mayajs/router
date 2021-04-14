@@ -1,6 +1,6 @@
 import { ModuleCustomType, ParentModule, ModuleMapper, ModuleMapperFactory } from "../types";
 import { ModuleWithProviders, ModuleWithProvidersProps } from "../interface";
-import { dependencyMapperFactory } from "./helpers";
+import { mapDependencies } from "./helpers";
 import { CustomModule } from "../class";
 
 export const mapModules: ModuleMapperFactory = (router, parentModule = null): ModuleMapper => (imported) => {
@@ -20,7 +20,6 @@ export const mapModules: ModuleMapperFactory = (router, parentModule = null): Mo
   if (!currentModule) return;
 
   if (isCustomModule) {
-    const mapDependencies = dependencyMapperFactory(router);
     const tempModule = new currentModule(...args);
     const { providers, imports, dependencies } = customModuleProps;
     tempModule.parent = parentModule as CustomModule;
