@@ -40,12 +40,10 @@ const findDependency = (name: string, dependencies: RouterDependencies, props: R
   if (dependencies[name]) return dependencies[name];
 
   const provider = mapProviders(name, _module) as any;
-
-  if (!provider || !provider?.__injectable__) return;
-
   let args: any[] = [];
 
-  if (provider.dependencies.length > 0) args = mapDependencies(dependencies, _module, provider.dependencies);
+  if (!provider) return;
+  if (provider?.dependencies?.length > 0) args = mapDependencies(dependencies, _module, provider.dependencies);
 
   const providerInstance: Services = new provider(...args);
   dependencies[name] = providerInstance;

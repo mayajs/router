@@ -24,7 +24,7 @@ For suggestions and features you want to see in the future you can visit our [is
 
 Before installing this package make sure to download and install Node.js 10 or higher.
 
-<sub>**To check your node version**</sub>
+To check your node version
 
 ```shell
 npm -v
@@ -36,10 +36,24 @@ For new project kindly initialize npm using the command below or see documentati
 npm init
 ```
 
+Install typescript and typescript watcher
+
+```shell
+npm i typescript ts-node-dev -D
+```
+
 Installation via command-line
 
 ```shell
 npm i @mayajs/router
+```
+
+Add `start` script in your `package.json`
+
+```js
+"scripts": {
+  "start": "tsnd src"
+}
 ```
 
 ## Features
@@ -56,7 +70,7 @@ npm i @mayajs/router
 
 ## Quick Start
 
-The easiest way to get started is to create a simple route
+The easiest way to get started is to create a simple route. Create a `src` folder inside your project folder. Inside the `src` folder create an `index.ts` file. Copy the code below inside the `index.ts` file.
 
 ```ts
 import maya from "@mayajs/router";
@@ -73,6 +87,14 @@ app.add([
 ]);
 
 http.createServer(app).listen(PORT, () => console.log(`Server listening on port ${PORT}.`));
+```
+
+### RUN
+
+To run your mayajs project open a terminal inside your current project and run the command below.
+
+```shell
+npm start
 ```
 
 ## ROUTE
