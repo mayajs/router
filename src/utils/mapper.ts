@@ -22,12 +22,14 @@ export const mapModules: ModuleMapperFactory = (router, parentModule = null): Mo
   if (!currentModule) return;
   if (isCustomModule) args = mapDependencies(router.dependencies, currentModule);
 
-  const _module = new currentModule(...args);
+  const tempModule = new currentModule(...args);
 
-  if (parentModule) _module.parent = parentModule as CustomModule;
-  if (isCustomModule) (_module as CustomModule).invoke();
+  if (parentModule) tempModule.parent = parentModule as CustomModule;
+  if (isCustomModule) (tempModule as CustomModule).invoke();
 
-  currentModule.imports.map(mapModules(router, currentModule));
+  const imports = tempModule.imports ?? currentModule.imports;
+  const _module = tempModule.imports ? tempModule : currentModule;
+  imports.map(mapModules(router, _module));
 };
 
 export const declarationsMapper = (_module: ParentModule, name: string = ""): boolean => {
