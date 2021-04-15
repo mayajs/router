@@ -79,5 +79,3 @@ export type ParentModule = CustomModule | MayaJsModule | null;
 export type ModuleMapperFactory = (router: RouterFunction, parentModule?: ParentModule | { path: string }) => ModuleMapper;
 
 export type FindDependency = (name: string, dependencies: RouterDependencies) => void;
-
-export type RouteCallbackFunction = (ctx: MayaJsContext) => RouteCallbackFunction;

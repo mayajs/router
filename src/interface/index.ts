@@ -9,7 +9,6 @@ import {
   Middlewares,
   ControllerType,
   RouteCallback,
-  RouteCallbackFunction,
   RouterMapper,
   RouterFunction,
 } from "../types";
@@ -244,12 +243,12 @@ export type RouteMethodCallbacks = {
    * }
    * ```
    */
-  [P in RequestMethod]: RouteCallbackFunction | RouteMethod;
+  [P in RequestMethod]: RouteCallback | RouteMethod;
 };
 
 export type RouteMethod = {
   middlewares?: Middlewares[];
-  callback: RouteCallbackFunction;
+  callback: RouteCallback;
 };
 
 export interface MethodRoute {
