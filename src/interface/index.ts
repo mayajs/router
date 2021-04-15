@@ -1,4 +1,17 @@
-import http from "http";
+import { CustomModule, Services } from "../class";
+import http, { IncomingHttpHeaders } from "http";
+import {
+  Callback,
+  RequestMethod,
+  ModuleCustomType,
+  ModuleProviders,
+  ModuleImports,
+  Middlewares,
+  ControllerType,
+  RouteCallback,
+  RouterMapper,
+  RouterFunction,
+} from "../types";
 
 export interface RouterFunctions {
   init: () => void;
@@ -76,9 +89,10 @@ export type RouterDependencies = { [x: string]: Services };
 
 export interface RouterHelperMethod {
   addRouteToList: (route: MayaJsRoute, _module?: CustomModule | null) => void;
-  findRoute: (path: string, method: MethodNames) => MayaJSRouteParams | null;
+  findRoute: (path: string, method: RequestMethod) => MayaJSRouteParams | null;
   executeRoute: (path: string, route: MayaJSRouteParams) => Promise<any>;
-  visitedRoute: (path: string, method: MethodNames) => VisitedRoutes | null;
+  visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
+  mapper: RouterMapper;
 }
 
 export interface RouterProps {
@@ -92,12 +106,15 @@ export interface RouterProps {
 
 export interface RouterMethods extends RouterHelperMethod, RouterProps {}
 
-export interface MayaRouter extends RouterFunctions, RouterProps {}
+export interface MayaRouter extends RouterFunctions, RouterProps {
+  router: RouterFunction;
+}
 
 export interface QueryParams {
   query: { [x: string]: string | string[] };
   params: { [x: string]: string };
   body: any;
+  file: any;
 }
 
 export interface MiddlewareContext {
@@ -108,8 +125,11 @@ export interface MiddlewareContext {
 
 export interface MayaJsContext extends MiddlewareContext, QueryParams {}
 
-export type RouteCallback = (ctx: MayaJsContext) => Promise<any> | any;
-export type RouteCallbackFunction = (ctx: MayaJsContext) => RouteCallbackFunction;
+export interface RouterContext extends MayaJsContext {
+  path: string;
+  headers: IncomingHttpHeaders;
+  method: RequestMethod;
+}
 
 export interface Route {
   /**
@@ -128,34 +148,12 @@ export interface Route {
   middlewares?: Middlewares[];
 }
 
+/**
+ * Type for what object is instances of
+ */
 export interface Type<T> extends Function {
   new (...args: any[]): T;
 }
-
-export type ControllerMiddleware = {
-  [key in MethodNames]: Middlewares[];
-};
-
-export abstract class Services {}
-
-/**
- * An abstract class that define all the methods for a single route
- */
-export class Controller {
-  middlewares: Partial<ControllerMiddleware> = {};
-  GET(ctx: MayaJsContext): Promise<any> | any {}
-  POST(ctx: MayaJsContext): Promise<any> | any {}
-  DELETE(ctx: MayaJsContext): Promise<any> | any {}
-  PUT(ctx: MayaJsContext): Promise<any> | any {}
-  PATCH(ctx: MayaJsContext): Promise<any> | any {}
-  OPTIONS(ctx: MayaJsContext): Promise<any> | any {}
-  HEAD(ctx: MayaJsContext): Promise<any> | any {}
-}
-
-export type ModuleProviders = Type<any>[];
-export type ModuleCustomType = Type<CustomModule | MayaJsModule>;
-export type ControllerType = Type<Controller>;
-export type ModuleImports = ModuleCustomType | ModuleWithProviders;
 
 export interface ModuleWithProviders extends ModuleWithProvidersProps {
   module: ModuleCustomType;
@@ -165,22 +163,6 @@ export interface ModuleWithProvidersProps {
   providers: ModuleProviders;
   dependencies?: (Type<Services> | Function)[];
   imports?: ModuleImports[];
-}
-export abstract class MayaJsModule {
-  declarations: ControllerType[] = [];
-  imports: ModuleImports[] = [];
-  exports: (ModuleCustomType | ControllerType)[] = [];
-  providers: ModuleProviders = [];
-  dependencies: any[] = [];
-  parent: ParentModule = null;
-  path = "";
-}
-
-export abstract class CustomModule extends MayaJsModule {
-  invoke() {}
-  static forRoot(...args: any): ModuleWithProviders {
-    return { module: class extends CustomModule {}, providers: [] };
-  }
 }
 
 export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
@@ -211,12 +193,12 @@ export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
 export interface MayaJSRouteParams extends Route {
   regex: RegExp;
   callback: RouteCallback;
-  method: MethodNames;
+  method: RequestMethod;
 }
 
 export interface MayaJSRoutes<T> {
   [x: string]: {
-    [K in MethodNames]: T;
+    [K in RequestMethod]: T;
   };
 }
 
@@ -247,11 +229,6 @@ export interface MayaJsRequest extends http.IncomingMessage, QueryParams {
 }
 
 /**
- *  Generic methods from Node.js 0.10
- * */
-export type MethodNames = "GET" | "POST" | "PUT" | "HEAD" | "DELETE" | "OPTIONS" | "PATCH";
-
-/**
  *  A record of method name and its callback functions
  * */
 export type RouteMethodCallbacks = {
@@ -266,34 +243,77 @@ export type RouteMethodCallbacks = {
    * }
    * ```
    */
-  [P in MethodNames]: RouteCallbackFunction | RouteMethod;
+  [P in RequestMethod]: RouteCallback | RouteMethod;
 };
 
 export type RouteMethod = {
   middlewares?: Middlewares[];
-  callback: RouteCallbackFunction;
+  callback: RouteCallback;
 };
 
-export type ResponseSender = (req: MayaJsRequest, res: MayaJsResponse, parsedUrl: any) => Promise<void>;
+export interface MethodRoute {
+  /**
+   * Route name
+   */
+  path: string;
+  /**
+   * HTTP method
+   */
+  requestMethod: RequestMethod;
+  /**
+   *  Method name within our class responsible for this route
+   */
+  methodName: string;
+  /**
+   * List of middlewares
+   */
+  middlewares: Callback[];
+}
 
-export type MayaJsNextfunction = (error?: any) => Promise<void> | void;
+export interface ModuleProperty {
+  bootstrap?: Array<Type<any>>;
+  declarations?: Array<Type<any>>;
+  imports?: Array<Type<any>>;
+  exports?: Array<Type<any>>;
+}
 
-export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextfunction, error: any) => void;
+export interface ModelList {
+  name: string;
+  path: string;
+}
 
-export type MayaJsMiddleware = (context: MayaJsContext, next: MayaJsNextfunction, error: any) => void;
+export interface MayaJSModule extends Partial<ModuleProperty> {
+  new (): {};
+}
 
-export type Middlewares = ExpressJsMiddleware | MayaJsMiddleware;
+export interface RoutesOptions {
+  path: string;
+  canActivate?: Type<any>;
+  canActivateChild?: Type<any>;
+  controller?: Type<any>;
+  children?: RoutesOptions[];
+}
 
-export type RouterFunction = RouterProps & RouterMethods;
+export interface ModelDictionary<T> {
+  [k: string]: T;
+}
 
-export type RouterMapper = (parent?: string) => (route: MayaJsRoute) => void;
+export interface DecoratorMethodOptions {
+  /**
+   * Method route path
+   */
+  path?: string;
+  /**
+   * List of middlewares
+   */
+  middlewares?: Callback[];
+}
 
-export type RouterMapperFactory = (router: RouterFunction, app: MayaRouter, _module?: CustomModule | null) => RouterMapper;
-
-export type ModuleMapper = (imported: ModuleImports) => void;
-
-export type ParentModule = CustomModule | MayaJsModule | null;
-
-export type ModuleMapperFactory = (router: RouterFunction, app: MayaRouter, parentModule?: ParentModule | { path: string }) => ModuleMapper;
-
-export type FindDependency = (name: string, dependencies: RouterDependencies) => void;
+/**
+ * A representation of additional methods for response object
+ */
+export interface ResponseObjectProps {
+  send(args: any, statusCode?: number): void;
+  json(json: object, statusCode?: number): void;
+  html(html: string, statusCode?: number): void;
+}

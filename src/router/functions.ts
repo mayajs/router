@@ -1,8 +1,10 @@
-import { MethodNames, RouteCallback, RouteMethod, RouterMethods, RouterProps, RouterFunction, MayaJSRouteParams } from "../interface";
-import { mapDependencies, sanitizePath } from "../utils/helpers";
+import { RouteMethod, RouterMethods, RouterProps, MayaJSRouteParams } from "../interface";
+import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
+import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
+import { declarationsMapper, mapModules } from "../utils/mapper";
 
 // Export default route object
 const router: RouterMethods = {
@@ -10,12 +12,16 @@ const router: RouterMethods = {
   findRoute: (path, method) => null,
   executeRoute: (path, route) => Promise.resolve(),
   visitedRoute: (path, method) => null,
+  mapper: (path, method) => (route) => {},
   ...props,
 };
 
 router.addRouteToList = function (route, _module) {
+  // Get the parent path
+  const parent = _module?.parent ? _module?.parent.path : "";
+
   // Sanitize current route path
-  const path = route.path;
+  const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
 
   // Check if path has params
   const hasParams = path.includes("/:");
@@ -27,15 +33,15 @@ router.addRouteToList = function (route, _module) {
   if (!this[list][path]) this[list][path] = {} as any;
 
   // Set route to list with path as a key
-  const setList = (key: MethodNames, options: MayaJSRouteParams) => (this[list][path][key] = options);
+  const setList = (key: RequestMethod, options: MayaJSRouteParams) => (this[list][path][key] = options);
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
 
   if (route.controller && route.hasOwnProperty("controller")) {
-    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies);
+    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
-    const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as MethodNames[];
+    const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = (controller as any)["routes"];
 
     routes.map(({ middlewares, methodName, path: routePath, requestMethod }: any) => {
@@ -49,7 +55,7 @@ router.addRouteToList = function (route, _module) {
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
     });
 
-    controllerProps.map((key: MethodNames) => {
+    controllerProps.map((key: RequestMethod) => {
       if (methods.includes(key)) {
         let middlewares = controller?.middlewares?.[key] ?? [];
 
@@ -63,7 +69,7 @@ router.addRouteToList = function (route, _module) {
   }
 
   if (!route?.controller) {
-    (Object.keys(route) as MethodNames[]).map((key): void => {
+    (Object.keys(route) as RequestMethod[]).map((key): void => {
       if (methods.includes(key) && route.hasOwnProperty("controller")) {
         throw new Error(`Property controller can't be used with ${key} method on route '${path}'`);
       }
@@ -134,7 +140,7 @@ router.executeRoute = async function (path, route) {
 
     if (!this.visitedRoutes[path][route.method]) {
       // Cache path route if not on visited routes
-      this.visitedRoutes[path][route.method] = { ...route, params: context.params, query: context.query, body: context.body };
+      this.visitedRoutes[path][route.method] = { ...route, ...context };
     }
   } catch (error) {
     // Catch error when running callback
@@ -148,4 +154,55 @@ router.visitedRoute = function (path, method) {
   return this?.visitedRoutes && this?.visitedRoutes[path] && this?.visitedRoutes[path][method] ? this?.visitedRoutes[path][method] : null;
 };
 
-export default (app: RouterProps): RouterFunction => merge(app, router as RouterMethods);
+router.mapper = function (parent = "", _module = null) {
+  const _this = this;
+
+  return (route) => {
+    // Create parent route
+    parent = parent.length > 0 ? sanitizePath(parent) : "";
+
+    // Sanitize route path
+    route.path = parent + sanitizePath(route.path);
+
+    if (_module !== null) _module.path = route.path;
+
+    const controllerName = route?.controller?.name;
+    let isDeclared = true;
+
+    // Check if controller is declared on a module
+    if (controllerName && _module !== null) isDeclared = declarationsMapper(_module, controllerName);
+
+    // Throw error if controller is not declared in a module
+    if (!isDeclared) {
+      const moduleName = _module?.constructor.name;
+      logger.red(`${controllerName} is not declared in ${moduleName}`);
+      throw new Error();
+    }
+
+    // Add route to list
+    _this.addRouteToList(route, _module);
+
+    if (route?.children !== undefined && route?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'children' in route '${route.path}'`);
+      throw new Error();
+    }
+
+    if (route?.controller !== undefined && route?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'controller' in route '${route.path}'`);
+      throw new Error();
+    }
+
+    // Check if route has children
+    if (route?.children && route?.children.length > 0) route.children.map(_this.mapper(route.path));
+
+    // Load all children asynchronously
+    if (route?.loadChildren) {
+      route
+        .loadChildren()
+        .then(mapModules(_this, _module ?? { path: route.path }))
+        .catch((error) => console.log(error));
+    }
+  };
+};
+
+export default (app: RouterProps): RouterFunction => merge(app, router);

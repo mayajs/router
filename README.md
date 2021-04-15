@@ -1,10 +1,16 @@
 <h1 align="center">MayaJS Router</h1>
 <p align="center"><img src="https://github.com/mayajs/maya/blob/master/maya.svg" ></p>
 <h2 align="center">Lightweight, simple and fast NodeJS Router developed using Typescript.</h2>
+<p align="center">
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/v/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/dm/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/l/@mayajs/router?style=for-the-badge&logo=appveyor" alt="License"></a>
+  <a href="https://github.com/microsoft/typescript-tslint-plugin"><img src="https://img.shields.io/badge/code%20style-standard-blue.svg?style=for-the-badge&logo=appveyor" alt="Code Style"></a>
+</p>
 
 ## Motivation
 
-We know that this is another **Express JS** like project. We develop **@mayajs/router** not to compete but to have our own router for our other projects like [@mayajs/core](https://github.com/mayajs/maya#readme). As much as possible we don't want to rely on other framework/library to create our own projects. This is just for maintainability and ease of transition for future updates.
+Yup another **ExpressJS** like library. We develop **@mayajs/router** not to compete but to have our own router for our other projects like [@mayajs/router](https://github.com/mayajs/maya#readme). As much as possible we don't want to rely on other framework/library to create our own projects. This is just for maintainability and ease of transition for future updates.
 
 ## Roadmap
 
@@ -18,7 +24,7 @@ For suggestions and features you want to see in the future you can visit our [is
 
 Before installing this package make sure to download and install Node.js 10 or higher.
 
-<sub>**To check your node version**</sub>
+To check your node version
 
 ```shell
 npm -v
@@ -30,10 +36,24 @@ For new project kindly initialize npm using the command below or see documentati
 npm init
 ```
 
+Install typescript and typescript watcher
+
+```shell
+npm i typescript ts-node-dev -D
+```
+
 Installation via command-line
 
 ```shell
 npm i @mayajs/router
+```
+
+Add `start` script in your `package.json`
+
+```js
+"scripts": {
+  "start": "tsnd src"
+}
 ```
 
 ## Features
@@ -50,7 +70,7 @@ npm i @mayajs/router
 
 ## Quick Start
 
-The easiest way to get started is to create a simple route
+The easiest way to get started is to create a simple route. Create a `src` folder inside your project folder. Inside the `src` folder create an `index.ts` file. Copy the code below inside the `index.ts` file.
 
 ```ts
 import maya from "@mayajs/router";
@@ -67,6 +87,14 @@ app.add([
 ]);
 
 http.createServer(app).listen(PORT, () => console.log(`Server listening on port ${PORT}.`));
+```
+
+### RUN
+
+To run your mayajs project open a terminal inside your current project and run the command below.
+
+```shell
+npm start
 ```
 
 ## ROUTE
