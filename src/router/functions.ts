@@ -17,8 +17,11 @@ const router: RouterMethods = {
 };
 
 router.addRouteToList = function (route, _module) {
+  // Get the parent path
+  const parent = _module?.parent ? _module?.parent.path : "";
+
   // Sanitize current route path
-  const path = route.path.replace(/^\/+|\/+$/g, "");
+  const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
 
   // Check if path has params
   const hasParams = path.includes("/:");
