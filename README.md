@@ -1,10 +1,16 @@
 <h1 align="center">MayaJS Router</h1>
 <p align="center"><img src="https://github.com/mayajs/maya/blob/master/maya.svg" ></p>
 <h2 align="center">Lightweight, simple and fast NodeJS Router developed using Typescript.</h2>
+<p align="center">
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/v/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/dm/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/l/@mayajs/router?style=for-the-badge&logo=appveyor" alt="License"></a>
+  <a href="https://github.com/microsoft/typescript-tslint-plugin"><img src="https://img.shields.io/badge/code%20style-standard-blue.svg?style=for-the-badge&logo=appveyor" alt="Code Style"></a>
+</p>
 
 ## Motivation
 
-We know that this is another **Express JS** like project. We develop **@mayajs/router** not to compete but to have our own router for our other projects like [@mayajs/core](https://github.com/mayajs/maya#readme). As much as possible we don't want to rely on other framework/library to create our own projects. This is just for maintainability and ease of transition for future updates.
+Yup another **ExpressJS** like library. We develop **@mayajs/router** not to compete but to have our own router for our other projects like [@mayajs/router](https://github.com/mayajs/maya#readme). As much as possible we don't want to rely on other framework/library to create our own projects. This is just for maintainability and ease of transition for future updates.
 
 ## Roadmap
 

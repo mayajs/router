@@ -1,4 +1,5 @@
-import { ExpressJsMiddleware, MayaJsContext, MayaJsMiddleware, Middlewares } from "../interface";
+import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares } from "../types";
+import { MayaJsContext } from "../interface";
 
 /**
  * A helper function for invoking a list of MayaJS or ExpressJS middlewares.

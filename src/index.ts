@@ -1,9 +1,14 @@
-import { MayaJsRouter, ExpressJsMiddleware, MayaJsMiddleware, CustomModule, MayaJsRoute, RouterMapper } from "./interface";
+import { MayaJsRouter, MayaJsRoute } from "./interface";
+import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
+import { CustomModule } from "./class";
 import app from "./router";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
 export interface MayaMiddlewares extends MayaJsMiddleware {}
 export * from "./interface";
+export * from "./types";
+export * from "./class";
+export * from "./utils/constants";
 
 /**
  * A Nodejs library for managing routes. MayaJs use a declarative way of defining routes.
@@ -39,28 +44,22 @@ function maya(): MayaJsRouter {
   return app;
 }
 
-export class RoutesMapper {}
-
 export class RouterModule extends CustomModule {
   static routes: MayaJsRoute[] = [];
   static isRoot = false;
-
-  constructor(private mapper: RouterMapper, private parentName: string = "") {
-    super();
-  }
 
   invoke() {
     if (!RouterModule.isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
 
-    RouterModule.routes.map(this.mapper(this.parentName));
+    RouterModule.routes.map(app.router.mapper(this?.parent?.path || "", this?.parent as CustomModule));
   }
 
   static forRoot(routes: MayaJsRoute[]) {
     RouterModule.isRoot = true;
     RouterModule.routes = routes;
-    return { module: RouterModule, providers: [], dependencies: [RoutesMapper, String] };
+    return { module: RouterModule, providers: [] };
   }
 }
 

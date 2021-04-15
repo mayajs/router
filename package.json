@@ -1,10 +1,10 @@
 {
   "name": "@mayajs/router",
-  "version": "0.3.0",
+  "version": "0.4.0-rc1",
   "description": "Simple NodeJS routing library created using Typescript",
   "main": "lib/index.js",
   "scripts": {
-    "clean": "rimraf interface && rimraf index.js && rimraf index.d.ts && rimraf utils && rimraf router && rimraf lib",
+    "clean": "rimraf interface && rimraf index.js && rimraf index.d.ts && rimraf utils && rimraf router && rimraf lib && rimraf class && rimraf exceptions && rimraf types",
     "tgz": "rimraf *.tgz",
     "package": "node ./scripts/clean-package.js",
     "start": "npm run clean && npm run tgz && tsc -w",
@@ -37,6 +37,9 @@
     "README.md",
     "interface",
     "utils",
+    "types",
+    "class",
+    "exceptions",
     "router",
     "**.d.ts"
   ]
