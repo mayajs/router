@@ -10,11 +10,12 @@
 
 ## Motivation
 
-Yup another **ExpressJS** like library. We develop **@mayajs/router** not to compete but to have our own router for our other projects like [@mayajs/router](https://github.com/mayajs/maya#readme). As much as possible we don't want to rely on other framework/library to create our own projects. This is just for maintainability and ease of transition for future updates.
+We develop this library to be used as the main router for [MayaJS](https://github.com/mayajs/maya#readme) RESTful API framework. As much as possible we want to have a full control of
+the libraries we used in our main projects for maintainability and ease of transition for future updates.
 
 ## Roadmap
 
-You can see the detail roadmap of the project [here.](https://github.com/mayajs/router/blob/master/ROADMAP.md)
+You can see the detailed roadmap of the project [here.](https://github.com/mayajs/router/blob/master/ROADMAP.md)
 
 ## Suggestions
 
@@ -42,13 +43,19 @@ Install typescript and typescript watcher
 npm i typescript ts-node-dev -D
 ```
 
-Installation via command-line
+Initialize typescript
+
+```shell
+tsc --init
+```
+
+Install mayajs router
 
 ```shell
 npm i @mayajs/router
 ```
 
-Add `start` script in your `package.json`
+Add `start` script on your `package.json`
 
 ```js
 "scripts": {
@@ -59,18 +66,20 @@ Add `start` script in your `package.json`
 ## Features
 
 - Simple interface
+- Lightweight library
 - Built with TypeScript
-- Uses native Nodejs API
-- Supports beginners to advance syntaxes
+- No third party library
+- Supports beginners to advanced developers
+- Supports third party middlewares like `ExpressJS`
 - Can be use both `Function` based and `Class` based coding style
-- Dependency Injection
-- Fast execution
-- Easy to learn
+- Dependency Injection and IOC
+- Fast execution a
+- Easy to learnnd caching
 - Modular code
 
 ## Quick Start
 
-The easiest way to get started is to create a simple route. Create a `src` folder inside your project folder. Inside the `src` folder create an `index.ts` file. Copy the code below inside the `index.ts` file.
+The easiest way to get started is to create a simple route. Create a `src` folder inside your project folder. Inside the `src` folder create an `index.ts` file. Copy the code below into `index.ts` file.
 
 ```ts
 import maya from "@mayajs/router";
@@ -89,7 +98,7 @@ app.add([
 http.createServer(app).listen(PORT, () => console.log(`Server listening on port ${PORT}.`));
 ```
 
-### RUN
+## RUN
 
 To run your mayajs project open a terminal inside your current project and run the command below.
 
