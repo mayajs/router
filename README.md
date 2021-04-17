@@ -1,12 +1,12 @@
-<h1 align="center">MayaJS Router</h1>
 <p align="center"><img src="https://github.com/mayajs/maya/blob/master/maya.svg" ></p>
-<h2 align="center">Lightweight, simple and fast NodeJS Router developed using Typescript.</h2>
+<h1 align="center">MayaJS Router</h1>
 <p align="center">
   <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/v/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Version"></a>
   <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/dm/@mayajs/router.svg?style=for-the-badge&logo=appveyor" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/@mayajs/router"><img src="https://img.shields.io/npm/l/@mayajs/router?style=for-the-badge&logo=appveyor" alt="License"></a>
   <a href="https://github.com/microsoft/typescript-tslint-plugin"><img src="https://img.shields.io/badge/code%20style-standard-blue.svg?style=for-the-badge&logo=appveyor" alt="Code Style"></a>
 </p>
+<h2 align="center">Lightweight, simple and fast NodeJS Router developed using Typescript.</h2>
 
 ## Motivation
 
@@ -65,17 +65,16 @@ Add `start` script on your `package.json`
 
 ## Features
 
-- Simple interface
+- Simple and easy
 - Lightweight library
 - Built with TypeScript
 - No third party library
-- Supports beginners to advanced developers
-- Supports third party middlewares like `ExpressJS`
-- Can be use both `Function` based and `Class` based coding style
+- Modules for shareable code
 - Dependency Injection and IOC
-- Fast execution a
-- Easy to learnnd caching
-- Modular code
+- Fast execution with route caching
+- Supports beginners to advanced developers
+- `Function` and `Class` based coding style
+- Supports third party middlewares like `ExpressJS`
 
 ## Quick Start
 
