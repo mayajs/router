@@ -25,6 +25,8 @@ For suggestions and features you want to see in the future you can visit our [is
 
 Before installing this package make sure to download and install Node.js 10 or higher.
 
+### Setup Node
+
 To check your node version
 
 ```shell
@@ -37,6 +39,8 @@ For new project kindly initialize npm using the command below or see documentati
 npm init
 ```
 
+### Setup Typescript
+
 Install typescript and typescript watcher
 
 ```shell
@@ -48,6 +52,8 @@ Initialize typescript
 ```shell
 tsc --init
 ```
+
+### Setup Router
 
 Install mayajs router
 
