@@ -58,7 +58,7 @@ export class RouterModule extends CustomModule {
 
   static forRoot(routes: MayaJsRoute[]) {
     RouterModule.isRoot = true;
-    RouterModule.routes = routes;
+    routes.map((route) => RouterModule.routes.push(route));
     return { module: RouterModule, providers: [] };
   }
 }
