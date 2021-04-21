@@ -1,4 +1,4 @@
-import { CustomModule, MayaJsController, MayaJsModule, Services } from "../class";
+import { CustomModule, MayaJsModule, Services } from "../class";
 import { MODULE_CONSTANTS } from "../utils/constants";
 import {
   MayaJsContext,
@@ -44,7 +44,7 @@ export type MayaJsNextFunction = (error?: any) => Promise<void> | void;
 
 export type RouteCallback = (ctx: MayaJsContext) => Promise<any> | any;
 
-export type ControllerType = Type<MayaJsController>;
+export type ControllerType = Type<any>;
 
 export type ModuleCustomType = Type<CustomModule | MayaJsModule>;
 
