@@ -1,4 +1,4 @@
-import { MayaRouter, RouterContext, VisitedRoutes } from "../interface";
+import { MayaJsContext, MayaRouter, RouterContext, VisitedRoutes } from "../interface";
 import { ResponseSender } from "../types";
 // import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
@@ -70,7 +70,10 @@ const send: ResponseSender = async (context: RouterContext) => {
     app.router.context = { ...context, params };
 
     // Create a factory method for executing current route
-    const execute = async () => res.send(await app.router.executeRoute(path, route));
+    const execute = async (context: MayaJsContext) => {
+      app.router.context = context;
+      res.send(await app.router.executeRoute(path, route));
+    };
 
     const middlewares = route.middlewares !== undefined ? route.middlewares : [];
 
