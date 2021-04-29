@@ -10,10 +10,11 @@ import { MayaJsContext } from "../interface";
  * @param error A message from the previous middleware
  */
 function middleware(middlewares: Middlewares[], ctx: MayaJsContext, callback: any, error?: any): void | Promise<void> {
-  if (!middlewares.length) return callback(ctx);
-
   const { req, res } = ctx;
   const context = { ...ctx, body: req.body };
+
+  if (!middlewares.length) return callback(context);
+
   const current = middlewares[0];
 
   // Create next function
