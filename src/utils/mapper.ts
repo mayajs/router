@@ -18,8 +18,13 @@ export const mapModules: ModuleMapperFactory = (router, parentModule = null): Mo
     isCustomModule = true;
   }
 
+  if (isCustomModule && parentModule && (<CustomModule>parentModule).providers) {
+    currentModule.providers.map((provider: any) => (<CustomModule>parentModule).providers.push(provider));
+  }
+
   if (!imported.hasOwnProperty("module")) currentModule = imported as ModuleCustomType;
   if (!currentModule) return;
+  if (currentModule.bootstrap) router.addRouteToList({ path: "", controller: currentModule.bootstrap });
   if (isCustomModule) args = mapDependencies(router.dependencies, currentModule);
 
   const tempModule = new currentModule(...args);
@@ -29,6 +34,7 @@ export const mapModules: ModuleMapperFactory = (router, parentModule = null): Mo
 
   const imports = tempModule.imports ?? currentModule.imports;
   const _module = tempModule.imports ? tempModule : currentModule;
+
   imports.map(mapModules(router, _module));
 };
 

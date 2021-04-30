@@ -54,11 +54,12 @@ export class RouterModule extends CustomModule {
     }
 
     RouterModule.routes.map(app.router.mapper(this?.parent?.path || "", this?.parent as CustomModule));
+    RouterModule.routes = [];
   }
 
   static forRoot(routes: MayaJsRoute[]) {
     RouterModule.isRoot = true;
-    RouterModule.routes = routes;
+    routes.map((route) => RouterModule.routes.push(route));
     return { module: RouterModule, providers: [] };
   }
 }

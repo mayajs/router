@@ -51,6 +51,8 @@ router.addRouteToList = function (route, _module) {
       // Create parent route
       const parent = path === "" ? "/" : path;
 
+      routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
+
       // Add controller route to list
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
     });
