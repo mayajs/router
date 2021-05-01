@@ -1,6 +1,5 @@
 import { MayaJsContext, MayaRouter, RouterContext, VisitedRoutes } from "../interface";
 import { ResponseSender } from "../types";
-// import routeMapper from "../utils/mapper";
 import middleware from "./middleware";
 import functions from "./functions";
 
@@ -10,9 +9,7 @@ export const props = {
   visitedRoutes: {},
   middlewares: [],
   context: {},
-  dependencies: {
-    // RoutesMapper: routeMapper,
-  },
+  dependencies: {},
 };
 
 const app: MayaRouter = {
