@@ -1,4 +1,4 @@
-import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares } from "../types";
+import { ExpressJsMiddleware, ExpressJsMiddlewareError, MayaJsMiddleware, Middlewares } from "../types";
 import { MayaJsContext } from "../interface";
 
 /**
@@ -18,10 +18,13 @@ function middleware(middlewares: Middlewares[], ctx: MayaJsContext, callback: an
   const current = middlewares[0];
 
   // Create next function
-  const next = (error: any) => middleware(middlewares.slice(1), { ...context, req, res }, callback, error);
+  const next = (error: any) => middleware(middlewares.slice(1), { ...context, req, res, error }, callback, error);
+
+  // Create middleware for express
+  const expressMiddleware = () => (error ? (<ExpressJsMiddlewareError>current)(error, req, res, next) : (<ExpressJsMiddleware>current)(req, res, next));
 
   // Check if arguments are more than 2
-  return current.length > 2 ? (<ExpressJsMiddleware>current)(req, res, next, error) : (<MayaJsMiddleware>current)(context, next, error);
+  return current.length > 2 ? expressMiddleware() : (<MayaJsMiddleware>current)(context, next);
 }
 
 export default middleware;
