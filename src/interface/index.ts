@@ -167,13 +167,7 @@ export interface ModuleWithProvidersProps {
 
 export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
   /**
-   * A path for a route endpoint
-   *
-   * ```
-   * {
-   *    path: "users"
-   * }
-   * ```
+   * A name for a route endpoint
    */
   path: string;
   /**
@@ -184,6 +178,10 @@ export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
    * A list of child routes that inherit the path of its parent
    */
   children?: MayaJsRoute[];
+  /**
+   * A list of guards
+   */
+  guards?: Middlewares[];
   /**
    * Lazy load a module
    */
