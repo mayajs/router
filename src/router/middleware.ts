@@ -11,7 +11,7 @@ import { MayaJsContext } from "../interface";
  */
 function middleware(middlewares: Middlewares[], ctx: MayaJsContext, callback: any, error?: any): void {
   const { req, res } = ctx;
-  const context = { ...ctx, body: req.body };
+  const context = { ...ctx, body: req.body, file: req.file };
 
   if (!middlewares.length) return callback(context);
 
