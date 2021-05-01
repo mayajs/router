@@ -66,7 +66,7 @@ export type ControllerMiddleware = {
 
 export type ResponseSender = (context: RouterContext) => Promise<void>;
 
-export type MayaJsNextfunction = (error?: any) => Promise<void> | void;
+export type MayaJsNextfunction = (error?: any) => void;
 
 export type RouterFunction = RouterProps & RouterMethods;
 
