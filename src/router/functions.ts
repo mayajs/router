@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJSRouteParams } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -33,7 +33,7 @@ router.addRouteToList = function (route, _module) {
   if (!this[list][path]) this[list][path] = {} as any;
 
   // Set route to list with path as a key
-  const setList = (key: RequestMethod, options: MayaJSRouteParams) => (this[list][path][key] = options);
+  const setList = (key: RequestMethod, options: MayaJsRoute) => (this[list][path][key] = options);
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];

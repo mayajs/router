@@ -89,15 +89,15 @@ export type RouterDependencies = { [x: string]: Services };
 
 export interface RouterHelperMethod {
   addRouteToList: (route: Route, _module?: CustomModule | null) => void;
-  findRoute: (path: string, method: RequestMethod) => MayaJSRouteParams | null;
-  executeRoute: (path: string, route: MayaJSRouteParams) => Promise<any>;
+  findRoute: (path: string, method: RequestMethod) => MayaJsRoute | null;
+  executeRoute: (path: string, route: MayaJsRoute) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
   mapper: RouterMapper;
 }
 
 export interface RouterProps {
-  routes: MayaJSRoutes<MayaJSRouteParams>;
-  routesWithParams: MayaJSRoutes<MayaJSRouteParams>;
+  routes: MayaJSRoutes<MayaJsRoute>;
+  routesWithParams: MayaJSRoutes<MayaJsRoute>;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
   context: any;
@@ -189,7 +189,7 @@ export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodC
   loadChildren?: () => Promise<ModuleCustomType>;
 }
 
-export interface MayaJSRouteParams extends RouteMiddlewareDependencies {
+export interface MayaJsRoute extends RouteMiddlewareDependencies {
   regex: RegExp;
   callback: RouteCallback;
   method: RequestMethod;
@@ -201,7 +201,7 @@ export interface MayaJSRoutes<T> {
   };
 }
 
-export interface VisitedRoutes extends MayaJSRouteParams, QueryParams {}
+export interface VisitedRoutes extends MayaJsRoute, QueryParams {}
 
 /**
  * A representation of additional methods for response object
