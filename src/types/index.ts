@@ -4,7 +4,7 @@ import {
   MayaJsContext,
   MayaJsRequest,
   MayaJsResponse,
-  MayaJsRoute,
+  Route,
   MayaRouter,
   ModuleProperty,
   ModuleWithProviders,
@@ -72,7 +72,7 @@ export type MayaJsNextfunction = (error?: any) => void;
 
 export type RouterFunction = RouterProps & RouterMethods;
 
-export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: MayaJsRoute) => void;
+export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: Route) => void;
 
 export type RouterMapperFactory = (router: RouterFunction, app: MayaRouter, _module?: CustomModule | null) => RouterMapper;
 

@@ -80,7 +80,7 @@ export interface RouterFunctions {
    *
    * @param routes A list of routes
    */
-  add: (routes: MayaJsRoute[]) => void;
+  add: (routes: Route[]) => void;
   headers: { [x: string]: string };
 }
 
@@ -88,7 +88,7 @@ export type MayaJsRouter = ((req: any, res: any) => void) & RouterFunctions;
 export type RouterDependencies = { [x: string]: Services };
 
 export interface RouterHelperMethod {
-  addRouteToList: (route: MayaJsRoute, _module?: CustomModule | null) => void;
+  addRouteToList: (route: Route, _module?: CustomModule | null) => void;
   findRoute: (path: string, method: RequestMethod) => MayaJSRouteParams | null;
   executeRoute: (path: string, route: MayaJSRouteParams) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
@@ -166,7 +166,7 @@ export interface ModuleWithProvidersProps {
   imports?: ModuleImports[];
 }
 
-export interface MayaJsRoute extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
+export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
   /**
    * A name for a route endpoint
    */
@@ -178,7 +178,7 @@ export interface MayaJsRoute extends RouteMiddlewareDependencies, Partial<RouteM
   /**
    * A list of child routes that inherit the path of its parent
    */
-  children?: MayaJsRoute[];
+  children?: Route[];
   /**
    * A list of guards
    */
