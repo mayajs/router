@@ -132,7 +132,7 @@ export interface RouterContext extends MayaJsContext {
   method: RequestMethod;
 }
 
-export interface Route {
+export interface RouteMiddlewareDependencies {
   /**
    * A list of dependencies for a controller
    */
@@ -166,7 +166,7 @@ export interface ModuleWithProvidersProps {
   imports?: ModuleImports[];
 }
 
-export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
+export interface MayaJsRoute extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
   /**
    * A name for a route endpoint
    */
@@ -189,7 +189,7 @@ export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
   loadChildren?: () => Promise<ModuleCustomType>;
 }
 
-export interface MayaJSRouteParams extends Route {
+export interface MayaJSRouteParams extends RouteMiddlewareDependencies {
   regex: RegExp;
   callback: RouteCallback;
   method: RequestMethod;
