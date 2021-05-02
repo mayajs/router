@@ -1,6 +1,6 @@
 import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
-import { RequestMethod, RouteCallback, RouterFunction } from "../types";
+import { Middlewares, RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
@@ -68,6 +68,7 @@ router.addRouteToList = function (route, _module) {
       const parent = path === "" ? "/" : path;
 
       routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
+      middlewares = [...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
 
       // Add controller route to list
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
@@ -78,10 +79,12 @@ router.addRouteToList = function (route, _module) {
         let middlewares = controller?.middlewares?.[key] ?? [];
         let guards = controller?.guards?.[key] ?? [];
 
+        middlewares = [...(route?.middlewares ?? []), ...guards, ...middlewares];
+
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
 
-        const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
+        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
 
         createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
 
@@ -109,7 +112,7 @@ router.addRouteToList = function (route, _module) {
 
         // Check if current method has middlewares
         if (current?.middlewares) {
-          middlewares = [...guards, ...middlewares, ...current.middlewares];
+          middlewares = [...middlewares, ...current.middlewares];
         }
 
         const routeCallback = (args: any) => (route[key] as RouteCallback)(args);
@@ -117,7 +120,7 @@ router.addRouteToList = function (route, _module) {
         // Create callback function
         const callback = current?.callback ?? routeCallback;
 
-        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+        const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
 
         createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
 
@@ -129,6 +132,12 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
+  function findCommonRoute(path: string[], routes: RouteBody, middlewares: Middlewares[]) {}
+
+  if (path !== "") {
+    findCommonRoute(path.split("/"), this.commonRoutes[""], []);
+  }
+
   // Check if path exist on `routes`
   let route = this?.routes && this?.routes[path] ? this?.routes[path] : null;
 
