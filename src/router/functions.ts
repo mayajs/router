@@ -65,7 +65,7 @@ router.addRouteToList = function (route, _module) {
         const callback = (args: any) => controller[key](args) as RouteCallback;
 
         // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback });
+        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback, path });
       }
     });
   }
@@ -95,7 +95,7 @@ router.addRouteToList = function (route, _module) {
         const callback = current?.callback ?? routeCallback;
 
         // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback });
+        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback, path });
       }
     });
   }

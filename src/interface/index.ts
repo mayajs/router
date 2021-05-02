@@ -193,6 +193,7 @@ export interface MayaJsRoute extends RouteMiddlewareDependencies {
   regex: RegExp;
   callback: RouteCallback;
   method: RequestMethod;
+  path: string;
 }
 
 export interface MayaJSRoutes<T> {
