@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -28,6 +28,22 @@ router.addRouteToList = function (route, _module) {
 
   //  Check if path has a param and select the correct route list
   const list = !hasParams ? "routes" : "routesWithParams";
+
+  function createCommonRoute(path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any {
+    const current = path[0];
+
+    if (current === "") return;
+
+    if (!routes?.[current]) routes[current] = {} as any;
+
+    if (routes[current] && path.length === 1) {
+      (routes[current] as RouteBody)[key] = options;
+      return;
+    }
+
+    path.shift();
+    return createCommonRoute(path, routes[current] as RouteBody, key, options);
+  }
 
   // Initialize path if undefined
   if (!this[list][path]) this[list][path] = {} as any;
@@ -64,8 +80,12 @@ router.addRouteToList = function (route, _module) {
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
 
+        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+
+        createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
+
         // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback, path });
+        setList(key, options);
       }
     });
   }
@@ -94,8 +114,12 @@ router.addRouteToList = function (route, _module) {
         // Create callback function
         const callback = current?.callback ?? routeCallback;
 
+        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+
+        createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
+
         // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback, path });
+        setList(key, options);
       }
     });
   }
