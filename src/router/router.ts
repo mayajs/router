@@ -6,7 +6,7 @@ import functions from "./functions";
 export const props: RouterProps = {
   routes: {},
   routesWithParams: {},
-  commonRoutes: {},
+  commonRoutes: { "": {} as any },
   visitedRoutes: {},
   middlewares: [],
   context: {},
