@@ -201,6 +201,9 @@ export interface MayaJSRoutes<T> {
   };
 }
 
+/**
+ * A list of routes already been visited and cache by mayajs
+ */
 export interface VisitedRoutes extends MayaJsRoute, QueryParams {}
 
 /**
