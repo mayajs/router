@@ -120,6 +120,7 @@ export interface QueryParams {
 export interface MiddlewareContext {
   res: MayaJsResponse;
   req: MayaJsRequest;
+  setStatus(code: number): void;
   error?: any;
 }
 

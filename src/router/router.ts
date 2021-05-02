@@ -64,7 +64,13 @@ const send: ResponseSender = async (context: RouterContext) => {
     const params = (route as VisitedRoutes).params || { ...route.regex.exec(path)?.groups };
 
     // Create MayaJS context
-    app.router.context = { ...context, params };
+    app.router.context = {
+      ...context,
+      params,
+      setStatus(code: number) {
+        res.status(code);
+      },
+    };
 
     // Create a factory method for executing current route
     const execute = async (context: MayaJsContext) => {
