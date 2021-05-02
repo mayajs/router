@@ -214,7 +214,7 @@ export interface RouteBody {
 }
 
 export interface CommonRoutes {
-  [x: string]: RouteBody;
+  "": RouteBody;
 }
 
 /**
