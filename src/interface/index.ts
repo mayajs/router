@@ -209,6 +209,7 @@ export interface ResponseObjectProps {
   send(args: any, statusCode?: number): void;
   json(json: object, statusCode?: number): void;
   html(html: string, statusCode?: number): void;
+  status(code?: number): ResponseObjectProps;
 }
 
 /**
