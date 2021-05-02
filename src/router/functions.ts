@@ -59,7 +59,7 @@ router.addRouteToList = function (route, _module) {
       const parent = path === "" ? "/" : path;
 
       routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
-      middlewares = [...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
+      middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
 
       // Add controller route to list
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
@@ -70,7 +70,7 @@ router.addRouteToList = function (route, _module) {
         let middlewares = controller?.middlewares?.[key] ?? [];
         let guards = controller?.guards?.[key] ?? [];
 
-        middlewares = [...(route?.middlewares ?? []), ...guards, ...middlewares];
+        middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
 
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
