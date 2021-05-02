@@ -23,12 +23,6 @@ router.addRouteToList = function (route, _module) {
   // Sanitize current route path
   const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
 
-  // Check if path has params
-  const hasParams = path.includes("/:");
-
-  //  Check if path has a param and select the correct route list
-  const list = !hasParams ? "routes" : "routesWithParams";
-
   const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any => {
     const current = path[0];
 
@@ -47,12 +41,6 @@ router.addRouteToList = function (route, _module) {
     path.shift();
     return createCommonRoute(path, routes[current] as RouteBody, key, options);
   };
-
-  // Initialize path if undefined
-  if (!this[list][path]) this[list][path] = {} as any;
-
-  // Set route to list with path as a key
-  const setList = (key: RequestMethod, options: MayaJsRoute) => (this[list][path][key] = options);
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
@@ -90,9 +78,6 @@ router.addRouteToList = function (route, _module) {
         const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
 
         createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
-
-        // Add route to list
-        setList(key, options);
       }
     });
   }
@@ -126,9 +111,6 @@ router.addRouteToList = function (route, _module) {
         const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
 
         createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
-
-        // Add route to list
-        setList(key, options);
       }
     });
   }
