@@ -96,11 +96,12 @@ export interface RouterHelperMethod {
 }
 
 export interface RouterProps {
+  context: any;
   routes: MayaJSRoutes<MayaJsRoute>;
   routesWithParams: MayaJSRoutes<MayaJsRoute>;
+  commonRoutes: CommonRoutes;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
-  context: any;
   dependencies: RouterDependencies;
 }
 
@@ -213,7 +214,7 @@ export interface RouteBody {
 }
 
 export interface CommonRoutes {
-  "": RouteBody;
+  [x: string]: RouteBody;
 }
 
 /**
