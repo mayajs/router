@@ -97,7 +97,7 @@ export interface RouterHelperMethod {
 
 export interface RouterProps {
   context: any;
-  commonRoutes: CommonRoutes;
+  routes: CommonRoutes;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
   dependencies: RouterDependencies;

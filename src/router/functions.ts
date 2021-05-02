@@ -27,7 +27,7 @@ router.addRouteToList = function (route, _module) {
     const current = path[0];
 
     if (current === "") {
-      this.commonRoutes[""][key] = options;
+      this.routes[""][key] = options;
       return;
     }
 
@@ -77,7 +77,7 @@ router.addRouteToList = function (route, _module) {
 
         const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
 
-        createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
+        createCommonRoute(path.split("/"), this.routes[""], key, options);
       }
     });
   }
@@ -110,7 +110,7 @@ router.addRouteToList = function (route, _module) {
 
         const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
 
-        createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
+        createCommonRoute(path.split("/"), this.routes[""], key, options);
       }
     });
   }
@@ -128,9 +128,9 @@ router.findRoute = function (path, method) {
     return findCommonRoute(path, routes[current] as RouteBody, method);
   }
 
-  if (path !== "") return findCommonRoute(path.split("/"), this.commonRoutes[""], method);
+  if (path !== "") return findCommonRoute(path.split("/"), this.routes[""], method);
 
-  return this.commonRoutes[""][method];
+  return this.routes[""][method];
 };
 
 router.executeRoute = async function (path, route) {

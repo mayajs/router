@@ -4,7 +4,7 @@ import middleware from "./middleware";
 import functions from "./functions";
 
 export const props: RouterProps = {
-  commonRoutes: { "": {} as any },
+  routes: { "": {} as any },
   visitedRoutes: {},
   middlewares: [],
   context: {},
