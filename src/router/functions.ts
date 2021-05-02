@@ -76,11 +76,12 @@ router.addRouteToList = function (route, _module) {
     controllerProps.map((key: RequestMethod) => {
       if (methods.includes(key)) {
         let middlewares = controller?.middlewares?.[key] ?? [];
+        let guards = controller?.guards?.[key] ?? [];
 
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
 
-        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+        const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
 
         createCommonRoute(path.split("/"), this.commonRoutes[""], key, options);
 
@@ -104,9 +105,11 @@ router.addRouteToList = function (route, _module) {
         // Set default middlewares from route
         let middlewares = route?.middlewares ?? [];
 
+        let guards = route?.guards ?? [];
+
         // Check if current method has middlewares
         if (current?.middlewares) {
-          middlewares = [...middlewares, ...current.middlewares];
+          middlewares = [...guards, ...middlewares, ...current.middlewares];
         }
 
         const routeCallback = (args: any) => (route[key] as RouteCallback)(args);
