@@ -1,11 +1,12 @@
-import { MayaJsContext, MayaRouter, RouterContext, VisitedRoutes } from "../interface";
+import { MayaJsContext, MayaRouter, RouterContext, RouterProps, VisitedRoutes } from "../interface";
 import { ResponseSender } from "../types";
 import middleware from "./middleware";
 import functions from "./functions";
 
-export const props = {
+export const props: RouterProps = {
   routes: {},
   routesWithParams: {},
+  commonRoutes: {},
   visitedRoutes: {},
   middlewares: [],
   context: {},
@@ -30,11 +31,8 @@ app.add = function (routes) {
 };
 
 app.init = function () {
-  // Destructure RouterProps
-  const { routes, routesWithParams, visitedRoutes, middlewares, context, dependencies } = app;
-
   // Initialize mayajs router
-  this.router = functions({ routes, routesWithParams, visitedRoutes, middlewares, context, dependencies });
+  this.router = functions({ ...app });
 };
 
 app.use = function (middleware) {
