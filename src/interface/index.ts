@@ -202,6 +202,20 @@ export interface MayaJSRoutes<T> {
   };
 }
 
+export interface RouteBody {
+  GET: MayaJsRoute;
+  DELETE: MayaJsRoute;
+  PATCH: MayaJsRoute;
+  PUT: MayaJsRoute;
+  POST: MayaJsRoute;
+  OPTIONS: MayaJsRoute;
+  [x: string]: RouteBody | MayaJsRoute;
+}
+
+export interface CommonRoutes {
+  "": RouteBody;
+}
+
 /**
  * A list of routes already been visited and cache by mayajs
  */
