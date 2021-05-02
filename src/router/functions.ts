@@ -29,10 +29,13 @@ router.addRouteToList = function (route, _module) {
   //  Check if path has a param and select the correct route list
   const list = !hasParams ? "routes" : "routesWithParams";
 
-  function createCommonRoute(path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any {
+  const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any => {
     const current = path[0];
 
-    if (current === "") return;
+    if (current === "") {
+      this.commonRoutes[""][key] = options;
+      return;
+    }
 
     if (!routes?.[current]) routes[current] = {} as any;
 
@@ -43,7 +46,7 @@ router.addRouteToList = function (route, _module) {
 
     path.shift();
     return createCommonRoute(path, routes[current] as RouteBody, key, options);
-  }
+  };
 
   // Initialize path if undefined
   if (!this[list][path]) this[list][path] = {} as any;
@@ -132,34 +135,24 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
-  function findCommonRoute(path: string[], routes: RouteBody, middlewares: Middlewares[]) {}
+  function findCommonRoute(path: string[], routes: RouteBody, method: RequestMethod, middlewares: Middlewares[]): null | MayaJsRoute {
+    const current = path[0];
+    const currentRoute = routes[current];
 
-  if (path !== "") {
-    findCommonRoute(path.split("/"), this.commonRoutes[""], []);
+    if (!routes?.[current]) return null;
+
+    if (routes[current] && path.length === 1) return (currentRoute as RouteBody)[method];
+
+    const routeMiddlewares = currentRoute?.middlewares as Middlewares[];
+    middlewares = [...middlewares, ...(routeMiddlewares ?? [])];
+
+    path.shift();
+    return findCommonRoute(path, routes[current] as RouteBody, method, middlewares);
   }
 
-  // Check if path exist on `routes`
-  let route = this?.routes && this?.routes[path] ? this?.routes[path] : null;
+  if (path !== "") return findCommonRoute(path.split("/"), this.commonRoutes[""], method, []);
 
-  // Check if path exist on `routesWithParams`
-  if (!route) {
-    // Get keys from `routesWithParams` object
-    const routeWithParamsKeys = Object.keys(this.routesWithParams);
-
-    for (const key of routeWithParamsKeys) {
-      // Get current route from key
-      const current = this.routesWithParams[key];
-
-      // Test if path will pass the route path regex pattern
-      if (current[method].regex.test(path)) {
-        route = current;
-        break;
-      }
-    }
-  }
-
-  // Check if route method is same as the request
-  return route ? route[method] : null;
+  return this.commonRoutes[""][method];
 };
 
 router.executeRoute = async function (path, route) {
