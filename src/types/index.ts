@@ -4,7 +4,7 @@ import {
   MayaJsContext,
   MayaJsRequest,
   MayaJsResponse,
-  MayaJsRoute,
+  Route,
   MayaRouter,
   ModuleProperty,
   ModuleWithProviders,
@@ -54,11 +54,13 @@ export type ModuleProviders = Class[];
 
 export type ModuleImports = ModuleCustomType | ModuleWithProviders;
 
-export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction, error: any) => void;
+export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
 
-export type MayaJsMiddleware = (context: MayaJsContext, next: MayaJsNextFunction, error: any) => void;
+export type ExpressJsMiddlewareError = (error: any, req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
 
-export type Middlewares = ExpressJsMiddleware | MayaJsMiddleware;
+export type MayaJsMiddleware = (context: MayaJsContext, next: MayaJsNextFunction) => void;
+
+export type Middlewares = ExpressJsMiddleware | ExpressJsMiddlewareError | MayaJsMiddleware;
 
 export type ControllerMiddleware = {
   [key in RequestMethod]: Middlewares[];
@@ -66,11 +68,11 @@ export type ControllerMiddleware = {
 
 export type ResponseSender = (context: RouterContext) => Promise<void>;
 
-export type MayaJsNextfunction = (error?: any) => Promise<void> | void;
+export type MayaJsNextfunction = (error?: any) => void;
 
 export type RouterFunction = RouterProps & RouterMethods;
 
-export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: MayaJsRoute) => void;
+export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: Route) => void;
 
 export type RouterMapperFactory = (router: RouterFunction, app: MayaRouter, _module?: CustomModule | null) => RouterMapper;
 
