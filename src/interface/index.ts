@@ -80,7 +80,7 @@ export interface RouterFunctions {
    *
    * @param routes A list of routes
    */
-  add: (routes: MayaJsRoute[]) => void;
+  add: (routes: Route[]) => void;
   headers: { [x: string]: string };
 }
 
@@ -88,19 +88,18 @@ export type MayaJsRouter = ((req: any, res: any) => void) & RouterFunctions;
 export type RouterDependencies = { [x: string]: Services };
 
 export interface RouterHelperMethod {
-  addRouteToList: (route: MayaJsRoute, _module?: CustomModule | null) => void;
-  findRoute: (path: string, method: RequestMethod) => MayaJSRouteParams | null;
-  executeRoute: (path: string, route: MayaJSRouteParams) => Promise<any>;
+  addRouteToList: (route: Route, _module?: CustomModule | null) => void;
+  findRoute: (path: string, method: RequestMethod) => MayaJsRoute | null;
+  executeRoute: (path: string, route: MayaJsRoute) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
   mapper: RouterMapper;
 }
 
 export interface RouterProps {
-  routes: MayaJSRoutes<MayaJSRouteParams>;
-  routesWithParams: MayaJSRoutes<MayaJSRouteParams>;
+  context: any;
+  routes: CommonRoutes;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
-  context: any;
   dependencies: RouterDependencies;
 }
 
@@ -120,6 +119,7 @@ export interface QueryParams {
 export interface MiddlewareContext {
   res: MayaJsResponse;
   req: MayaJsRequest;
+  setStatus(code: number): void;
   error?: any;
 }
 
@@ -131,7 +131,7 @@ export interface RouterContext extends MayaJsContext {
   method: RequestMethod;
 }
 
-export interface Route {
+export interface RouteMiddlewareDependencies {
   /**
    * A list of dependencies for a controller
    */
@@ -165,15 +165,9 @@ export interface ModuleWithProvidersProps {
   imports?: ModuleImports[];
 }
 
-export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
+export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
   /**
-   * A path for a route endpoint
-   *
-   * ```
-   * {
-   *    path: "users"
-   * }
-   * ```
+   * A name for a route endpoint
    */
   path: string;
   /**
@@ -183,17 +177,22 @@ export interface MayaJsRoute extends Route, Partial<RouteMethodCallbacks> {
   /**
    * A list of child routes that inherit the path of its parent
    */
-  children?: MayaJsRoute[];
+  children?: Route[];
+  /**
+   * A list of guards
+   */
+  guards?: Middlewares[];
   /**
    * Lazy load a module
    */
   loadChildren?: () => Promise<ModuleCustomType>;
 }
 
-export interface MayaJSRouteParams extends Route {
+export interface MayaJsRoute extends RouteMiddlewareDependencies {
   regex: RegExp;
   callback: RouteCallback;
   method: RequestMethod;
+  path: string;
 }
 
 export interface MayaJSRoutes<T> {
@@ -202,7 +201,24 @@ export interface MayaJSRoutes<T> {
   };
 }
 
-export interface VisitedRoutes extends MayaJSRouteParams, QueryParams {}
+export interface RouteBody {
+  GET: MayaJsRoute;
+  DELETE: MayaJsRoute;
+  PATCH: MayaJsRoute;
+  PUT: MayaJsRoute;
+  POST: MayaJsRoute;
+  OPTIONS: MayaJsRoute;
+  [x: string]: RouteBody | MayaJsRoute;
+}
+
+export interface CommonRoutes {
+  "": RouteBody;
+}
+
+/**
+ * A list of routes already been visited and cache by mayajs
+ */
+export interface VisitedRoutes extends MayaJsRoute, QueryParams {}
 
 /**
  * A representation of additional methods for response object
@@ -211,6 +227,7 @@ export interface ResponseObjectProps {
   send(args: any, statusCode?: number): void;
   json(json: object, statusCode?: number): void;
   html(html: string, statusCode?: number): void;
+  status(code?: number): ResponseObjectProps;
 }
 
 /**

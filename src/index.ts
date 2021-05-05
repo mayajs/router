@@ -1,4 +1,4 @@
-import { MayaJsRouter, MayaJsRoute } from "./interface";
+import { MayaJsRouter, Route } from "./interface";
 import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
 import { CustomModule } from "./class";
 import app from "./router";
@@ -45,7 +45,7 @@ function maya(): MayaJsRouter {
 }
 
 export class RouterModule extends CustomModule {
-  static routes: MayaJsRoute[] = [];
+  static routes: Route[] = [];
   static isRoot = false;
 
   invoke() {
@@ -57,7 +57,7 @@ export class RouterModule extends CustomModule {
     RouterModule.routes = [];
   }
 
-  static forRoot(routes: MayaJsRoute[]) {
+  static forRoot(routes: Route[]) {
     RouterModule.isRoot = true;
     routes.map((route) => RouterModule.routes.push(route));
     return { module: RouterModule, providers: [] };

@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJSRouteParams } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -23,17 +23,24 @@ router.addRouteToList = function (route, _module) {
   // Sanitize current route path
   const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
 
-  // Check if path has params
-  const hasParams = path.includes("/:");
+  const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any => {
+    const current = path[0];
 
-  //  Check if path has a param and select the correct route list
-  const list = !hasParams ? "routes" : "routesWithParams";
+    if (current === "") {
+      this.routes[""][key] = options;
+      return;
+    }
 
-  // Initialize path if undefined
-  if (!this[list][path]) this[list][path] = {} as any;
+    if (!routes?.[current]) routes[current] = {} as any;
 
-  // Set route to list with path as a key
-  const setList = (key: RequestMethod, options: MayaJSRouteParams) => (this[list][path][key] = options);
+    if (routes[current] && path.length === 1) {
+      (routes[current] as RouteBody)[key] = options;
+      return;
+    }
+
+    path.shift();
+    return createCommonRoute(path, routes[current] as RouteBody, key, options);
+  };
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
@@ -52,6 +59,7 @@ router.addRouteToList = function (route, _module) {
       const parent = path === "" ? "/" : path;
 
       routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
+      middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
 
       // Add controller route to list
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
@@ -60,12 +68,16 @@ router.addRouteToList = function (route, _module) {
     controllerProps.map((key: RequestMethod) => {
       if (methods.includes(key)) {
         let middlewares = controller?.middlewares?.[key] ?? [];
+        let guards = controller?.guards?.[key] ?? [];
+
+        middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
 
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
 
-        // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback });
+        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+
+        createCommonRoute(path.split("/"), this.routes[""], key, options);
       }
     });
   }
@@ -84,6 +96,8 @@ router.addRouteToList = function (route, _module) {
         // Set default middlewares from route
         let middlewares = route?.middlewares ?? [];
 
+        let guards = route?.guards ?? [];
+
         // Check if current method has middlewares
         if (current?.middlewares) {
           middlewares = [...middlewares, ...current.middlewares];
@@ -94,36 +108,29 @@ router.addRouteToList = function (route, _module) {
         // Create callback function
         const callback = current?.callback ?? routeCallback;
 
-        // Add route to list
-        setList(key, { middlewares, dependencies: [], method: key, regex: regex(path), callback });
+        const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
+
+        createCommonRoute(path.split("/"), this.routes[""], key, options);
       }
     });
   }
 };
 
 router.findRoute = function (path, method) {
-  // Check if path exist on `routes`
-  let route = this?.routes && this?.routes[path] ? this?.routes[path] : null;
+  function findCommonRoute(path: string[], routes: RouteBody, method: RequestMethod): null | MayaJsRoute {
+    const current = path[0];
+    const currentRoute = routes[current];
 
-  // Check if path exist on `routesWithParams`
-  if (!route) {
-    // Get keys from `routesWithParams` object
-    const routeWithParamsKeys = Object.keys(this.routesWithParams);
+    if (!routes?.[current]) return null;
+    if (routes[current] && path.length === 1) return (currentRoute as RouteBody)[method];
 
-    for (const key of routeWithParamsKeys) {
-      // Get current route from key
-      const current = this.routesWithParams[key];
-
-      // Test if path will pass the route path regex pattern
-      if (current[method].regex.test(path)) {
-        route = current;
-        break;
-      }
-    }
+    path.shift();
+    return findCommonRoute(path, routes[current] as RouteBody, method);
   }
 
-  // Check if route method is same as the request
-  return route ? route[method] : null;
+  if (path !== "") return findCommonRoute(path.split("/"), this.routes[""], method);
+
+  return this.routes[""][method];
 };
 
 router.executeRoute = async function (path, route) {

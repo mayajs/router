@@ -1,4 +1,4 @@
-import { RouterDependencies, RouterProps, Type } from "../interface";
+import { MayaJsResponse, RouterDependencies, RouterProps, Type } from "../interface";
 import { ParentModule } from "../types";
 import { Services } from "../class";
 
@@ -68,4 +68,10 @@ export function mapDependencies(routerDep: RouterDependencies, _module?: ParentM
   };
 
   return _dependencies ? _dependencies.map(mapDependencyItems) : [];
+}
+
+export function statusCodeFactory(res: MayaJsResponse) {
+  return (code: number) => {
+    res.status(code);
+  };
 }

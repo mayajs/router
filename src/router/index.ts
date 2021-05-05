@@ -4,6 +4,7 @@ import merge from "../utils/merge";
 import response from "./response";
 import { URL } from "url";
 import { RequestMethod } from "../types";
+import { statusCodeFactory } from "../utils/helpers";
 
 async function handler(req: MayaJsRequest, res: MayaJsResponse) {
   const protocol = req.headers.referer ? req.headers.referer.split(":")[0] : "http";
@@ -24,6 +25,7 @@ async function handler(req: MayaJsRequest, res: MayaJsResponse) {
     method,
     headers,
     path,
+    setStatus: statusCodeFactory(res),
   };
 
   // Sends result back and end request
