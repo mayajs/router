@@ -1,6 +1,6 @@
 import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
-import { RequestMethod, RouteCallback, RouterFunction } from "../types";
+import { Middlewares, RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
@@ -37,6 +37,8 @@ router.addRouteToList = function (route, _module) {
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
 
+  if (route.path === "") route?.middlewares?.map((item) => (this.routes[""] as RouteBody).middlewares.push(item));
+
   if (route.controller && route.hasOwnProperty("controller")) {
     const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
@@ -51,7 +53,7 @@ router.addRouteToList = function (route, _module) {
       const parent = path === "" ? "/" : path;
 
       routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
-      middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
+      middlewares = [...this.routes[""].middlewares, ...this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
 
       // Add controller route to list
       this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
@@ -62,7 +64,7 @@ router.addRouteToList = function (route, _module) {
         let middlewares = controller?.middlewares?.[key] ?? [];
         let guards = controller?.guards?.[key] ?? [];
 
-        middlewares = [...this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
+        middlewares = [...this.routes[""].middlewares, ...this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
 
         // Create callback function
         const callback = (args: any) => controller[key](args) as RouteCallback;
@@ -100,7 +102,14 @@ router.addRouteToList = function (route, _module) {
         // Create callback function
         const callback = current?.callback ?? routeCallback;
 
-        const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
+        const options = {
+          middlewares: [...this.routes[""].middlewares, ...guards, ...middlewares],
+          dependencies: [],
+          method: key,
+          regex: regex(path),
+          callback,
+          path,
+        };
 
         createCommonRoute(path.split("/"), this.routes[""], key, options, route);
       }
@@ -110,15 +119,18 @@ router.addRouteToList = function (route, _module) {
 
 router.findRoute = function (path, method) {
   const callback = () => {};
+  const middlewares: Middlewares[] = [];
 
   function findCommonRoute(paths: string[], routes: RouteBody, method: RequestMethod): null | MayaJsRoute {
     const current = paths[0];
     const currentRoute = routes[current] as RouteBody;
     const isEnd = routes[current] && paths.length === 1;
 
+    routes?.middlewares?.map((item) => middlewares.push(item));
+
     if (!routes?.[current]) return null;
     if (isEnd && method !== "OPTIONS") return currentRoute[method];
-    if (isEnd && method === "OPTIONS") return { middlewares: [...currentRoute.middlewares], method, regex: regex(path), callback, path };
+    if (isEnd && method === "OPTIONS") return { middlewares, method, regex: regex(path), callback, path };
 
     paths.shift();
     return findCommonRoute(paths, routes[current] as RouteBody, method);
