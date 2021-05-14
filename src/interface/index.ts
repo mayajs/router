@@ -208,7 +208,8 @@ export interface RouteBody {
   PUT: MayaJsRoute;
   POST: MayaJsRoute;
   OPTIONS: MayaJsRoute;
-  [x: string]: RouteBody | MayaJsRoute;
+  middlewares: Middlewares[];
+  [x: string]: RouteBody | MayaJsRoute | Middlewares[];
 }
 
 export interface CommonRoutes {
@@ -330,7 +331,7 @@ export interface DecoratorMethodOptions {
  * A representation of additional methods for response object
  */
 export interface ResponseObjectProps {
-  send(args: any, statusCode?: number): void;
+  send(args?: any, statusCode?: number): void;
   json(json: object, statusCode?: number): void;
   html(html: string, statusCode?: number): void;
 }
