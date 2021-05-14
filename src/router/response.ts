@@ -18,7 +18,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
 
-      if (!isText) return this.json(!value?.message ? { message: value.message } : value, code);
+      if (!isText) return this.json(!value?.message ? { message: value?.message ?? "" } : value, code);
 
       res.writeHead(code, contentType[0]);
       endResponse(value);
