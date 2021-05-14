@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route } from "../interface";
 import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -23,23 +23,15 @@ router.addRouteToList = function (route, _module) {
   // Sanitize current route path
   const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
 
-  const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute): any => {
+  const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parent: Route): any => {
     const current = path[0];
 
-    if (current === "") {
-      this.routes[""][key] = options;
-      return;
-    }
-
-    if (!routes?.[current]) routes[current] = {} as any;
-
-    if (routes[current] && path.length === 1) {
-      (routes[current] as RouteBody)[key] = options;
-      return;
-    }
+    if (current === "") return (this.routes[""][key] = options);
+    if (!routes?.[current]) routes[current] = { middlewares: [...(parent.middlewares ?? []), ...(parent.guards ?? [])] } as any;
+    if (routes[current] && path.length === 1) return ((routes[current] as RouteBody)[key] = options);
 
     path.shift();
-    return createCommonRoute(path, routes[current] as RouteBody, key, options);
+    return createCommonRoute(path, routes[current] as RouteBody, key, options, parent);
   };
 
   // List of request method name
@@ -77,7 +69,7 @@ router.addRouteToList = function (route, _module) {
 
         const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
 
-        createCommonRoute(path.split("/"), this.routes[""], key, options);
+        createCommonRoute(path.split("/"), this.routes[""], key, options, route);
       }
     });
   }
@@ -110,22 +102,26 @@ router.addRouteToList = function (route, _module) {
 
         const options = { middlewares: [...guards, ...middlewares], dependencies: [], method: key, regex: regex(path), callback, path };
 
-        createCommonRoute(path.split("/"), this.routes[""], key, options);
+        createCommonRoute(path.split("/"), this.routes[""], key, options, route);
       }
     });
   }
 };
 
 router.findRoute = function (path, method) {
-  function findCommonRoute(path: string[], routes: RouteBody, method: RequestMethod): null | MayaJsRoute {
-    const current = path[0];
-    const currentRoute = routes[current];
+  const callback = () => {};
+
+  function findCommonRoute(paths: string[], routes: RouteBody, method: RequestMethod): null | MayaJsRoute {
+    const current = paths[0];
+    const currentRoute = routes[current] as RouteBody;
+    const isEnd = routes[current] && paths.length === 1;
 
     if (!routes?.[current]) return null;
-    if (routes[current] && path.length === 1) return (currentRoute as RouteBody)[method];
+    if (isEnd && method !== "OPTIONS") return currentRoute[method];
+    if (isEnd && method === "OPTIONS") return { middlewares: [...currentRoute.middlewares], method, regex: regex(path), callback, path };
 
-    path.shift();
-    return findCommonRoute(path, routes[current] as RouteBody, method);
+    paths.shift();
+    return findCommonRoute(paths, routes[current] as RouteBody, method);
   }
 
   if (path !== "") return findCommonRoute(path.split("/"), this.routes[""], method);

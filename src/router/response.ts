@@ -7,7 +7,7 @@ const contentType = contentTypeValues.map((type) => ({ "Content-Type": type }));
 
 function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
   const endResponse = (value: any) => {
-    res.write(`${value}`);
+    if (value) res.write(`${value}`);
     res.end();
   };
 
@@ -18,7 +18,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
 
-      if (!isText) return this.json(value?.message ? { message: value.message } : value, code);
+      if (!isText) return this.json(!value?.message ? { message: value.message } : value, code);
 
       res.writeHead(code, contentType[0]);
       endResponse(value);
