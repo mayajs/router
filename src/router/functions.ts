@@ -210,7 +210,7 @@ router.mapper = function (parent = "", _module = null) {
     }
 
     // Check if route has children
-    if (route?.children && route?.children.length > 0) route.children.map(_this.mapper(route.path));
+    if (route?.children && route?.children.length > 0) route.children.map(_this.mapper(route.path, _module));
 
     // Load all children asynchronously
     if (route?.loadChildren) {
