@@ -1,4 +1,4 @@
-import { MayaJsResponse, RouterDependencies, RouterProps, Type } from "../interface";
+import { MayaJsResponse, RouteBody, RouterDependencies, RouterProps, Type } from "../interface";
 import { ParentModule } from "../types";
 import { Services } from "../class";
 
@@ -74,4 +74,11 @@ export function statusCodeFactory(res: MayaJsResponse) {
   return (code: number) => {
     res.status(code);
   };
+}
+
+export function mapParamRoute(routes: RouteBody): RouteBody {
+  const keys = ["middlewares", "GET", "POST", "DELETE", "OPTIONS", "PUT", "PATCH"];
+  const regex = /:[\w|-]+?$/;
+  const key = Object.keys(routes).filter((key) => !keys.includes(key) && regex.test(key))[0];
+  return routes[key] as RouteBody;
 }
