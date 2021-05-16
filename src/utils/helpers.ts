@@ -98,6 +98,6 @@ export function routeFinderFactory(path: string) {
     if (isEnd && isOptions) return { middlewares, method, regex: regex(path), callback: () => {}, path };
 
     paths.shift();
-    return routeFinder(paths, routes[current] as RouteBody, method, middlewares);
+    return routeFinder(paths, route, method, middlewares);
   };
 }
