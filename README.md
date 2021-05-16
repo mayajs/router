@@ -248,17 +248,42 @@ router.use((context, next, error) => {
 A child route is a route that appended to its parent route. It can be added using the `children` property from the route object.
 
 ```ts
-const child = {
-  path: "child",
-  GET: () => "This is from a child route", // You can call this route by `users/child`
-};
+app.add([
+  {
+    path: "parent", // This is the `parent` route
+    children: [
+      {
+        path: "child", // You can call this child route by `parent/child`
+        GET: () => "This is from a child route",
+      },
+    ],
+  },
+]);
+```
 
-const parent = {
-  path: "user",
-  children: [child], // This is a list of routes.
-};
+```
+NOTE: A `child` route can also have its own `children`.
+```
 
-app.add([parent]);
+```ts
+app.add([
+  {
+    path: "parent", // This is the `parent` route
+    GET: () => "This is a parent route",
+    children: [
+      {
+        path: "child", // You can call this child route by `users/child`
+        GET: () => "This is a child route",
+        children: [
+          {
+            path: "grandchild", // You can call this child route by `parent/child/grandchild`
+            GET: () => "This is a grandchild route",
+          },
+        ],
+      },
+    ],
+  },
+]);
 ```
 
 ## CONTROLLER
@@ -332,10 +357,6 @@ class UsersController extends Controller {
     this.userServices.add();
   }
 }
-```
-
-```
-NOTE: A `child` route can also have its own `children`.
 ```
 
 ## MODULE
