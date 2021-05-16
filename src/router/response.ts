@@ -18,7 +18,10 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
 
-      if (!isText) return this.json(!value?.message ? { message: value?.message ?? "" } : value, code);
+      if (!isText) return this.json(value?.message && isError ? { message: value?.message } : value, code);
+
+      const htmlPattern = /<([^>]+?)([^>]*?)>(.*?)<\/\1>/gi;
+      if (htmlPattern.test(value)) return this.html(value);
 
       res.writeHead(code, contentType[0]);
       endResponse(value);
