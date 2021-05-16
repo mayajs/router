@@ -20,6 +20,9 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
 
       if (!isText) return this.json(value?.message && isError ? { message: value?.message } : value, code);
 
+      const htmlPattern = /<([^>]+?)([^>]*?)>(.*?)<\/\1>/gi;
+      if (htmlPattern.test(value)) return this.html(value);
+
       res.writeHead(code, contentType[0]);
       endResponse(value);
     },
