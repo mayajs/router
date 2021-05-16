@@ -1,6 +1,6 @@
 import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route } from "../interface";
-import { logger, mapDependencies, sanitizePath } from "../utils/helpers";
-import { Middlewares, RequestMethod, RouteCallback, RouterFunction } from "../types";
+import { routeFinderFactory, logger, mapDependencies, sanitizePath } from "../utils/helpers";
+import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./router";
@@ -118,27 +118,7 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
-  const callback = () => {};
-  const middlewares: Middlewares[] = [];
-
-  function findCommonRoute(paths: string[], routes: RouteBody, method: RequestMethod): null | MayaJsRoute {
-    const current = paths[0];
-    const currentRoute = routes[current] as RouteBody;
-    const isEnd = routes[current] && paths.length === 1;
-
-    routes?.middlewares?.map((item) => middlewares.push(item));
-
-    if (!routes?.[current]) return null;
-    if (isEnd && method !== "OPTIONS") return currentRoute[method];
-    if (isEnd && method === "OPTIONS") return { middlewares, method, regex: regex(path), callback, path };
-
-    paths.shift();
-    return findCommonRoute(paths, routes[current] as RouteBody, method);
-  }
-
-  if (path !== "") return findCommonRoute(path.split("/"), this.routes[""], method);
-
-  return this.routes[""][method];
+  return path !== "" ? routeFinderFactory(path)(path.split("/"), this.routes[""], method, []) : this.routes[""][method];
 };
 
 router.executeRoute = async function (path, route) {

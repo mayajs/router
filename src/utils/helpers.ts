@@ -1,6 +1,7 @@
-import { MayaJsResponse, RouterDependencies, RouterProps, Type } from "../interface";
-import { ParentModule } from "../types";
+import { MayaJsResponse, MayaJsRoute, RouteBody, RouterDependencies, RouterProps, Type } from "../interface";
+import { Middlewares, ParentModule, RequestMethod } from "../types";
 import { Services } from "../class";
+import regex from "./regex";
 
 // We use '+' instead of template string '${}' because of performance gain
 // See https://stackoverflow.com/questions/6094117/prepend-text-to-beginning-of-string
@@ -73,5 +74,30 @@ export function mapDependencies(routerDep: RouterDependencies, _module?: ParentM
 export function statusCodeFactory(res: MayaJsResponse) {
   return (code: number) => {
     res.status(code);
+  };
+}
+
+export function mapParamRoute(routes: RouteBody): RouteBody {
+  const keys = ["middlewares", "GET", "POST", "DELETE", "OPTIONS", "PUT", "PATCH"];
+  const regex = /:[\w|-]+?$/;
+  const key = Object.keys(routes).filter((key) => !keys.includes(key) && regex.test(key))[0];
+  return routes[key] as RouteBody;
+}
+
+export function routeFinderFactory(path: string) {
+  return function routeFinder(paths: string[], routes: RouteBody, method: RequestMethod, middlewares: Middlewares[]): null | MayaJsRoute {
+    const current = paths[0];
+    const isEnd = paths.length === 1;
+    const isOptions = method === "OPTIONS";
+    const route = (routes?.[current] ?? mapParamRoute(routes)) as RouteBody;
+
+    routes?.middlewares?.map((item) => middlewares.push(item));
+
+    if (!route) return null;
+    if (isEnd && !isOptions) return route[method];
+    if (isEnd && isOptions) return { middlewares, method, regex: regex(path), callback: () => {}, path };
+
+    paths.shift();
+    return routeFinder(paths, routes[current] as RouteBody, method, middlewares);
   };
 }
