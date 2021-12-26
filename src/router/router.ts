@@ -141,7 +141,7 @@ router.executeRoute = async function (path, route) {
     }
   } catch (error) {
     // Catch error when running callback
-    message = error;
+    message = `${(error as Error)?.message || error}`;
   }
 
   return message;
