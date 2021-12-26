@@ -37,6 +37,22 @@ function createCommonRoute(_this: RouterMethods, routePath: string[], routes: Ro
   return createCommonRoute(_this, routePath, routes[current] as RouteBody, key, options, parentRoute);
 }
 
+function routerMapper(_this: RouterMethods, path: string, controller: any, route: Route) {
+  return ({ middlewares, methodName, path: routePath, requestMethod }: any) => {
+    // Create callback function
+    const callback = (args: any) => controller[methodName](args) as RouteCallback;
+
+    // Create parent route
+    const parentRoute = path === "" ? "/" : path;
+
+    routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
+    middlewares = [..._this.routes[""].middlewares, ..._this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
+
+    // Add controller route to list
+    _this.addRouteToList({ path: sanitizePath(parentRoute + routePath), middlewares, [requestMethod]: callback });
+  };
+}
+
 router.addRouteToList = function (route, _module) {
   // Get the parent path
   const parent = _module?.parent ? _module?.parent.path : "";
@@ -55,19 +71,7 @@ router.addRouteToList = function (route, _module) {
     const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = (controller as any)["routes"];
 
-    routes.map(({ middlewares, methodName, path: routePath, requestMethod }: any) => {
-      // Create callback function
-      const callback = (args: any) => (controller as any)[methodName](args) as RouteCallback;
-
-      // Create parent route
-      const parent = path === "" ? "/" : path;
-
-      routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
-      middlewares = [...this.routes[""].middlewares, ...this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
-
-      // Add controller route to list
-      this.addRouteToList({ path: sanitizePath(parent + routePath), middlewares, [requestMethod]: callback });
-    });
+    routes.map(routerMapper(this, path, controller, route));
 
     controllerProps.map((key: RequestMethod) => {
       if (methods.includes(key)) {
