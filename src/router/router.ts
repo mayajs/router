@@ -16,23 +16,33 @@ const router: RouterMethods = {
   ...props,
 };
 
+function createCommonRoute(_this: RouterMethods, routePath: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
+  const current = routePath[0];
+
+  if ((parentRoute?.path === "" || !parentRoute?.path) && current === "") {
+    _this.routes[""][key] = options;
+    return;
+  }
+  if (current === "" && routePath.length === 1) {
+    routes[key] = options;
+    return;
+  }
+  if (!routes?.[current]) routes[current] = { middlewares: [...(parentRoute.middlewares ?? []), ...(parentRoute.guards ?? [])] } as any;
+  if (routes[current] && routePath.length === 1) {
+    (routes[current] as RouteBody)[key] = options;
+    return;
+  }
+
+  routePath.shift();
+  return createCommonRoute(_this, routePath, routes[current] as RouteBody, key, options, parentRoute);
+}
+
 router.addRouteToList = function (route, _module) {
   // Get the parent path
   const parent = _module?.parent ? _module?.parent.path : "";
 
   // Sanitize current route path
   const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
-
-  const createCommonRoute = (path: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parent: Route): any => {
-    const current = path[0];
-
-    if (current === "") return (this.routes[""][key] = options);
-    if (!routes?.[current]) routes[current] = { middlewares: [...(parent.middlewares ?? []), ...(parent.guards ?? [])] } as any;
-    if (routes[current] && path.length === 1) return ((routes[current] as RouteBody)[key] = options);
-
-    path.shift();
-    return createCommonRoute(path, routes[current] as RouteBody, key, options, parent);
-  };
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
@@ -71,7 +81,7 @@ router.addRouteToList = function (route, _module) {
 
         const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
 
-        createCommonRoute(path.split("/"), this.routes[""], key, options, route);
+        createCommonRoute(this, path.split("/"), this.routes[""], key, options, route);
       }
     });
   }
@@ -111,7 +121,7 @@ router.addRouteToList = function (route, _module) {
           path,
         };
 
-        createCommonRoute(path.split("/"), this.routes[""], key, options, route);
+        createCommonRoute(this, path.split("/"), this.routes[""], key, options, route);
       }
     });
   }
