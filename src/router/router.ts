@@ -53,6 +53,24 @@ function routerMapper(_this: RouterMethods, path: string, controller: any, route
   };
 }
 
+function propsControllerMapper(_this: RouterMethods, path: string, controller: any, route: Route, methods: string[]) {
+  return (key: RequestMethod) => {
+    if (methods.includes(key)) {
+      let middlewares = controller?.middlewares?.[key] ?? [];
+      let guards = controller?.guards?.[key] ?? [];
+
+      middlewares = [..._this.routes[""].middlewares, ..._this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
+
+      // Create callback function
+      const callback = (args: any) => controller[key](args) as RouteCallback;
+
+      const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
+
+      createCommonRoute(_this, path.split("/"), _this.routes[""], key, options, route);
+    }
+  };
+}
+
 router.addRouteToList = function (route, _module) {
   // Get the parent path
   const parent = _module?.parent ? _module?.parent.path : "";
@@ -72,22 +90,7 @@ router.addRouteToList = function (route, _module) {
     const routes = (controller as any)["routes"];
 
     routes.map(routerMapper(this, path, controller, route));
-
-    controllerProps.map((key: RequestMethod) => {
-      if (methods.includes(key)) {
-        let middlewares = controller?.middlewares?.[key] ?? [];
-        let guards = controller?.guards?.[key] ?? [];
-
-        middlewares = [...this.routes[""].middlewares, ...this.middlewares, ...(route?.middlewares ?? []), ...guards, ...middlewares];
-
-        // Create callback function
-        const callback = (args: any) => controller[key](args) as RouteCallback;
-
-        const options = { middlewares, dependencies: [], method: key, regex: regex(path), callback, path };
-
-        createCommonRoute(this, path.split("/"), this.routes[""], key, options, route);
-      }
-    });
+    controllerProps.forEach(propsControllerMapper(this, path, controller, route, methods));
   }
 
   if (!route?.controller) {
