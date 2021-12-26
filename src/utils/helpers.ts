@@ -54,10 +54,10 @@ const findDependency = (name: string, dependencies: RouterDependencies, props: R
 export function mapDependencies(routerDep: RouterDependencies, _module?: ParentModule, dependencies?: any[]) {
   const props = getFunctionProps<RouterProps>(mapDependencies);
   const _dependencies = dependencies ?? _module?.dependencies;
-  const promitives = ["String", "Boolean", "Function", "Array"];
+  const primitives = ["String", "Boolean", "Function", "Array"];
 
   const mapDependencyItems = ({ name }: any) => {
-    if (promitives.includes(name)) return undefined;
+    if (primitives.includes(name)) return undefined;
 
     const dependency = findDependency(name, routerDep, props, _module);
 
@@ -79,8 +79,8 @@ export function statusCodeFactory(res: MayaJsResponse) {
 
 export function mapParamRoute(routes: RouteBody): RouteBody {
   const keys = ["middlewares", "GET", "POST", "DELETE", "OPTIONS", "PUT", "PATCH"];
-  const regex = /:[\w|-]+?$/;
-  const key = Object.keys(routes).filter((key) => !keys.includes(key) && regex.test(key))[0];
+  const pattern = /:[\w|-]+$/;
+  const key = Object.keys(routes).filter((route) => !keys.includes(route) && pattern.test(route))[0];
   return routes[key] as RouteBody;
 }
 
@@ -95,7 +95,16 @@ export function routeFinderFactory(path: string) {
 
     if (!route) return null;
     if (isEnd && !isOptions) return route[method];
-    if (isEnd && isOptions) return { middlewares, method, regex: regex(path), callback: () => {}, path };
+    if (isEnd && isOptions)
+      return {
+        middlewares,
+        method,
+        regex: regex(path),
+        callback: () => {
+          /* This is intentional */
+        },
+        path,
+      };
 
     paths.shift();
     return routeFinder(paths, route, method, middlewares);
