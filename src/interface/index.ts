@@ -335,3 +335,10 @@ export interface ResponseObjectProps {
   json(json: object, statusCode?: number): void;
   html(html: string, statusCode?: number): void;
 }
+
+export interface RouterMapperArgs {
+  _this: RouterMethods;
+  path: string;
+  controller: any;
+  route: Route;
+}
