@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs } from "../interface";
 import { routeFinderFactory, logger, mapDependencies, sanitizePath } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -19,6 +19,10 @@ const router: RouterMethods = {
   },
   ...props,
 };
+
+interface MapperArgs extends RouterMapperArgs {
+  methods: string[];
+}
 
 function createCommonRoute(_this: RouterMethods, routePath: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
   const current = routePath[0];
@@ -41,7 +45,7 @@ function createCommonRoute(_this: RouterMethods, routePath: string[], routes: Ro
   return createCommonRoute(_this, routePath, routes[current] as RouteBody, key, options, parentRoute);
 }
 
-function routerMapper(_this: RouterMethods, path: string, controller: any, route: Route) {
+function routerMapper({ _this, path, controller, route }: RouterMapperArgs) {
   return ({ middlewares, methodName, path: routePath, requestMethod }: any) => {
     // Create callback function
     const callback = (args: any) => controller[methodName](args) as RouteCallback;
@@ -57,7 +61,7 @@ function routerMapper(_this: RouterMethods, path: string, controller: any, route
   };
 }
 
-function propsControllerMapper(_this: RouterMethods, path: string, controller: any, route: Route, methods: string[]) {
+function propsControllerMapper({ _this, path, controller, route, methods }: MapperArgs) {
   return (key: RequestMethod) => {
     if (methods.includes(key)) {
       let middlewares = controller?.middlewares?.[key] ?? [];
@@ -75,7 +79,7 @@ function propsControllerMapper(_this: RouterMethods, path: string, controller: a
   };
 }
 
-function loadChildrenMapper(_this: RouterMethods, path: string, controller: any, route: Route, methods: string[]) {
+function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
   return (key: RequestMethod | "loadChildren"): void => {
     if (key === "loadChildren" && route.path !== "") {
       _this.routes[""][route.path] = {} as any;
@@ -137,12 +141,12 @@ router.addRouteToList = function (route, _module) {
     const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = controller["routes"];
 
-    routes.map(routerMapper(this, path, controller, route));
-    controllerProps.forEach(propsControllerMapper(this, path, controller, route, methods));
+    routes.map(routerMapper({ _this: this, path, controller, route }));
+    controllerProps.forEach(propsControllerMapper({ _this: this, path, controller, route, methods }));
   }
 
   if (!route?.controller) {
-    (Object.keys(route) as (RequestMethod | "loadChildren")[]).forEach(loadChildrenMapper(this, path, route, route, methods));
+    (Object.keys(route) as (RequestMethod | "loadChildren")[]).forEach(loadChildrenMapper({ _this: this, path, route, methods }));
   }
 };
 
