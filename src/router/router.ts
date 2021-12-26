@@ -8,11 +8,15 @@ import { declarationsMapper, mapModules } from "../utils/mapper";
 
 // Export default route object
 const router: RouterMethods = {
-  addRouteToList: (route, _module) => {},
+  addRouteToList: (route, _module) => {
+    /* This is intentional */
+  },
   findRoute: (path, method) => null,
   executeRoute: (path, route) => Promise.resolve(),
   visitedRoute: (path, method) => null,
-  mapper: (path, method) => (route) => {},
+  mapper: (path, method) => (route) => {
+    /* This is intentional */
+  },
   ...props,
 };
 
@@ -120,18 +124,18 @@ router.addRouteToList = function (route, _module) {
   const parent = _module?.parent ? _module?.parent.path : "";
 
   // Sanitize current route path
-  const path = (parent + route.path).replace(/^\/+|\/+$/g, "");
+  const path = (parent + route.path).replace(/^\/+/g, "");
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
 
-  if (route.path === "") route?.middlewares?.map((item) => (this.routes[""] as RouteBody).middlewares.push(item));
+  if (route.path === "") route?.middlewares?.map((item) => this.routes[""].middlewares.push(item));
 
   if (route.controller && route.hasOwnProperty("controller")) {
     const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
     const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
-    const routes = (controller as any)["routes"];
+    const routes = controller["routes"];
 
     routes.map(routerMapper(this, path, controller, route));
     controllerProps.forEach(propsControllerMapper(this, path, controller, route, methods));
@@ -215,7 +219,7 @@ router.mapper = function (parent = "", _module = null) {
     }
 
     // Check if route has children
-    if (route?.children && route?.children.length > 0) route.children.map(_this.mapper(route.path, _module));
+    if (route?.children && route?.children.length > 0) route.children.forEach(_this.mapper(route.path, _module));
 
     // Load all children asynchronously
     if (route?.loadChildren) {
