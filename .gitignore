@@ -12,6 +12,12 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Build
 index.js
 index.d.ts
+exceptions
+router
+class
+interface
+types
+*/temp-package.json
 
 # Runtime data
 pids
