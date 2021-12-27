@@ -135,18 +135,21 @@ router.addRouteToList = function (route, _module) {
 
   if (route.path === "") route?.middlewares?.map((item) => this.routes[""].middlewares.push(item));
 
+  const mapperArgs = { _this: this, path, route, methods };
+
   if (route.controller && route.hasOwnProperty("controller")) {
     const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
     const controller = new route.controller(...dependencies);
     const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = controller["routes"];
 
-    routes.map(routerMapper({ _this: this, path, controller, route }));
-    controllerProps.forEach(propsControllerMapper({ _this: this, path, controller, route, methods }));
+    routes.map(routerMapper({ ...mapperArgs, controller }));
+    controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
   }
 
   if (!route?.controller) {
-    (Object.keys(route) as (RequestMethod | "loadChildren")[]).forEach(loadChildrenMapper({ _this: this, path, route, methods }));
+    const methodsChildrenArray = Object.keys(route) as (RequestMethod | "loadChildren")[];
+    methodsChildrenArray.forEach(loadChildrenMapper(mapperArgs));
   }
 };
 
