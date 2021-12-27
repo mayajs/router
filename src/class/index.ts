@@ -22,17 +22,33 @@ export abstract class MayaJsModule {
 export class MayaJsController {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: any[] = [];
-  GET(ctx: MayaJsContext): Promise<any> | any {}
-  POST(ctx: MayaJsContext): Promise<any> | any {}
-  DELETE(ctx: MayaJsContext): Promise<any> | any {}
-  PUT(ctx: MayaJsContext): Promise<any> | any {}
-  PATCH(ctx: MayaJsContext): Promise<any> | any {}
-  OPTIONS(ctx: MayaJsContext): Promise<any> | any {}
-  HEAD(ctx: MayaJsContext): Promise<any> | any {}
+  GET(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  POST(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  DELETE(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  PUT(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  PATCH(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  OPTIONS(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
+  HEAD(ctx: MayaJsContext): Promise<any> | any {
+    /* This is intentional */
+  }
 }
 
 export abstract class CustomModule extends MayaJsModule {
-  invoke() {}
+  invoke() {
+    /* This is intentional */
+  }
   static forRoot(...args: any): ModuleWithProviders {
     return { module: class extends CustomModule {}, providers: [] };
   }

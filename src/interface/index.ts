@@ -45,7 +45,7 @@ export interface RouterFunctions {
   use: (middleware: Middlewares) => MayaRouter;
   /**
    * A function that adds the path for a route and reference the routes define to MayaJs route list.
-   * This routes callback function will be executed everytime an incoming request has the same path or match its regex pattern.
+   * This routes callback function will be executed every time an incoming request has the same path or match its regex pattern.
    *
    * ```
    * app.add([
@@ -63,7 +63,7 @@ export interface RouterFunctions {
    *      return "Hello, World";
    *   },
    *
-   *   // A method object that has callbacka and middlewares
+   *   // A method object that has callback and middlewares
    *   POST: {
    *
    *    // Method specific middlewares
@@ -232,13 +232,13 @@ export interface ResponseObjectProps {
 }
 
 /**
- * An object representing NodeJS Server Response with additonal
+ * An object representing NodeJS Server Response with additional
  * methods added by the @mayajs/router api
  */
 export interface MayaJsResponse extends http.ServerResponse, ResponseObjectProps {}
 
 /**
- * An object representing NodeJS Incoming Message with additonal
+ * An object representing NodeJS Incoming Message with additional
  * methods added by the @mayajs/router api
  */
 export interface MayaJsRequest extends http.IncomingMessage, QueryParams {
@@ -334,4 +334,11 @@ export interface ResponseObjectProps {
   send(args?: any, statusCode?: number): void;
   json(json: object, statusCode?: number): void;
   html(html: string, statusCode?: number): void;
+}
+
+export interface RouterMapperArgs {
+  _this: RouterMethods;
+  path: string;
+  controller: any;
+  route: Route;
 }
