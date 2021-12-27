@@ -1,6 +1,6 @@
 {
   "name": "@mayajs/router",
-  "version": "0.6.0-rc2",
+  "version": "0.6.0",
   "description": "Simple NodeJS routing library created using Typescript",
   "main": "lib/index.js",
   "scripts": {
