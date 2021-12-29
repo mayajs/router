@@ -204,8 +204,6 @@ router.visitedRoute = function (path, method) {
 };
 
 router.mapper = function (parent = "", _module = null) {
-  const _this = this;
-
   return (route) => {
     // Create parent route
     parent = parent.length > 0 ? sanitizePath(parent) : "";
@@ -244,13 +242,13 @@ router.mapper = function (parent = "", _module = null) {
     }
 
     // Check if route has children
-    if (route?.children && route?.children.length > 0) route.children.forEach(_this.mapper(route.path, _module));
+    if (route?.children && route?.children.length > 0) route.children.forEach(this.mapper(route.path, _module));
 
     // Load all children asynchronously
     if (route?.loadChildren) {
       route
         .loadChildren()
-        .then(mapModules(_this, _module ?? { path: route.path }))
+        .then(mapModules(this, _module ?? { path: route.path }))
         .catch((error) => console.log(error));
     }
   };
