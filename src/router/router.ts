@@ -213,7 +213,7 @@ router.mapper = function (parent = "", _module = null) {
     // Sanitize route path
     route.path = parent + sanitizePath(route.path);
 
-    if (_module !== null) _module.path = route.path;
+    if (_module !== null && !_module?.path) _module.path = route.path;
 
     const controllerName = route?.controller?.name;
     let isDeclared = true;
