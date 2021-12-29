@@ -117,9 +117,19 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
 }
 
 function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
-  return (key: RequestMethod | "loadChildren"): void => {
-    if (key === "loadChildren" && route.path !== "") {
-      _this.routes[""][route.path] = {} as any;
+  return (key: "loadChildren"): void => {
+    if (route.path !== "") {
+      const createPath = (paths: string[], routes: any): void => {
+        if (paths.length === 0) return;
+        if (!routes[paths[0]]) {
+          routes[paths[0]] = {};
+        }
+        routes = routes[paths[0]];
+        paths.shift();
+        return createPath(paths, routes);
+      };
+
+      createPath(route.path.split("/"), _this.routes);
     }
   };
 }
@@ -153,10 +163,9 @@ router.addRouteToList = function (route, _module) {
 
   if (routeMethods.length > 0) (routeMethods as RequestMethod[]).forEach(addRouteMethod(mapperArgs));
 
-  if (!route?.controller) {
-    const methodsChildrenArray = Object.keys(route) as (RequestMethod | "loadChildren")[];
-    methodsChildrenArray.forEach(loadChildrenMapper(mapperArgs));
-  }
+  const loadChildren = routeKeys.filter((key) => "loadChildren" === key.toLowerCase());
+
+  if (loadChildren.length > 0) (loadChildren as "loadChildren"[]).forEach(loadChildrenMapper(mapperArgs));
 };
 
 router.findRoute = function (path, method) {
