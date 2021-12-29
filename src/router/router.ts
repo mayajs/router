@@ -135,11 +135,8 @@ function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "c
 }
 
 router.addRouteToList = function (route, _module) {
-  // Get the parent path
-  const parent = _module?.parent ? _module?.parent.path : "";
-
   // Sanitize current route path
-  const path = (parent + route.path).replace(/^\/+/g, "");
+  const path = route.path.replace(/^\/+/g, "");
 
   // List of request method name
   const methods = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
