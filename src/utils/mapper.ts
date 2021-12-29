@@ -35,7 +35,7 @@ export const mapModules: ModuleMapperFactory =
     const tempModule = new currentModule(...args);
 
     if (parentModule) tempModule.parent = parentModule as CustomModule;
-    if (isCustomModule) (tempModule as CustomModule).invoke();
+    if (isCustomModule && (tempModule as CustomModule).invoke) (tempModule as CustomModule).invoke();
 
     const _imports = tempModule.imports ?? currentModule.imports;
     const _module = tempModule.imports ? tempModule : currentModule;
