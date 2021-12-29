@@ -52,13 +52,12 @@ export class RouterModule extends CustomModule {
     if (!RouterModule.isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
-    RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this?.parent as CustomModule));
-    RouterModule.routes = [];
+    RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this as CustomModule));
   }
 
   static forRoot(routes: Route[]) {
     RouterModule.isRoot = true;
-    routes.forEach((route) => RouterModule.routes.push(route));
+    RouterModule.routes = routes;
     return { module: RouterModule, providers: [] };
   }
 }
