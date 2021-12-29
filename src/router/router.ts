@@ -201,15 +201,18 @@ router.visitedRoute = function (path, method) {
 
 router.mapper = function (parent = "", _module = null) {
   return (route) => {
+    // Create an object from route
+    const routeObj = { ...route };
+
     // Create parent route
     parent = parent.length > 0 ? sanitizePath(parent) : "";
 
     // Sanitize route path
-    route.path = parent + sanitizePath(route.path);
+    routeObj.path = parent + sanitizePath(route.path);
 
-    if (_module !== null && !_module?.path) _module.path = route.path;
+    if (_module !== null && !_module?.path) _module.path = routeObj.path;
 
-    const controllerName = route?.controller?.name;
+    const controllerName = routeObj?.controller?.name;
     let isDeclared = true;
 
     // Check if controller is declared on a module
@@ -222,29 +225,29 @@ router.mapper = function (parent = "", _module = null) {
       throw new Error();
     }
 
-    if (route) {
+    if (routeObj) {
       // Add route to list
-      this.addRouteToList(route, _module);
+      this.addRouteToList(routeObj, _module);
     }
 
-    if (route?.children !== undefined && route?.loadChildren !== undefined) {
-      logger.red(`Property 'loadChildren' can't be used with 'children' in route '${route.path}'`);
+    if (routeObj?.children !== undefined && routeObj?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'children' in route '${routeObj.path}'`);
       throw new Error();
     }
 
-    if (route?.controller !== undefined && route?.loadChildren !== undefined) {
-      logger.red(`Property 'loadChildren' can't be used with 'controller' in route '${route.path}'`);
+    if (routeObj?.controller !== undefined && routeObj?.loadChildren !== undefined) {
+      logger.red(`Property 'loadChildren' can't be used with 'controller' in route '${routeObj.path}'`);
       throw new Error();
     }
 
     // Check if route has children
-    if (route?.children && route?.children.length > 0) route.children.forEach(this.mapper(route.path, _module));
+    if (routeObj?.children && routeObj?.children.length > 0) routeObj.children.forEach(this.mapper(routeObj.path, _module));
 
     // Load all children asynchronously
-    if (route?.loadChildren) {
-      route
+    if (routeObj?.loadChildren) {
+      routeObj
         .loadChildren()
-        .then(mapModules(this, route.path, _module ?? { path: route.path }))
+        .then(mapModules(this, routeObj.path, _module ?? { path: routeObj.path }))
         .catch((error) => console.log(error));
     }
   };
