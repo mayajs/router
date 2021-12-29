@@ -9,13 +9,13 @@ export const mapModules: ModuleMapperFactory =
     let args: any[] = [];
     let currentModule: any;
     let isCustomModule = false;
+
     if ((imported as ModuleWithProviders)?.module) {
       currentModule = (imported as ModuleWithProviders).module;
       const { dependencies = [], providers = [], imports = [] } = imported as ModuleWithProviders;
       currentModule["dependencies"] = dependencies;
       currentModule["providers"] = providers;
       currentModule["imports"] = imports;
-      currentModule["parent"] = parentModule;
       isCustomModule = true;
     }
 
@@ -25,6 +25,9 @@ export const mapModules: ModuleMapperFactory =
 
     if (!imported.hasOwnProperty("module")) currentModule = imported as ModuleCustomType;
     if (!currentModule) return;
+
+    currentModule["parent"] = parentModule;
+
     if (currentModule.bootstrap) router.addRouteToList({ path: "", controller: currentModule.bootstrap });
     if (isCustomModule) args = mapDependencies(router.dependencies, currentModule);
 
