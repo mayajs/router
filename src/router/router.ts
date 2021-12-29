@@ -228,8 +228,10 @@ router.mapper = function (parent = "", _module = null) {
       throw new Error();
     }
 
-    // Add route to list
-    _this.addRouteToList(route, _module);
+    if (route) {
+      // Add route to list
+      this.addRouteToList(route, _module);
+    }
 
     if (route?.children !== undefined && route?.loadChildren !== undefined) {
       logger.red(`Property 'loadChildren' can't be used with 'children' in route '${route.path}'`);
