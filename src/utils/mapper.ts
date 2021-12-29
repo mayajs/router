@@ -4,7 +4,7 @@ import { mapDependencies } from "./helpers";
 import { CustomModule } from "../class";
 
 export const mapModules: ModuleMapperFactory =
-  (router, parentModule = null): ModuleMapper =>
+  (router, path, parentModule = null): ModuleMapper =>
   (imported) => {
     let args: any[] = [];
     let currentModule: any;
@@ -26,6 +26,7 @@ export const mapModules: ModuleMapperFactory =
     if (!imported.hasOwnProperty("module")) currentModule = imported as ModuleCustomType;
     if (!currentModule) return;
 
+    currentModule["path"] = path;
     currentModule["parent"] = parentModule;
 
     if (currentModule.bootstrap) router.addRouteToList({ path: "", controller: currentModule.bootstrap });
@@ -39,11 +40,7 @@ export const mapModules: ModuleMapperFactory =
     const _imports = tempModule.imports ?? currentModule.imports;
     const _module = tempModule.imports ? tempModule : currentModule;
 
-    if (!_module?.path) {
-      _module.path = parentModule?.path ?? "";
-    }
-
-    _imports.map(mapModules(router, _module));
+    _imports.map(mapModules(router, path, _module));
   };
 
 export const declarationsMapper = (_module: ParentModule, name: string = ""): boolean => {

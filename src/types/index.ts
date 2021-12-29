@@ -78,6 +78,6 @@ export type ModuleMapper = (imported: ModuleImports) => void;
 
 export type ParentModule = CustomModule | MayaJsModule | null;
 
-export type ModuleMapperFactory = (router: RouterFunction, parentModule?: ParentModule | { path: string }) => ModuleMapper;
+export type ModuleMapperFactory = (router: RouterFunction, path: string, parentModule?: ParentModule | { path: string }) => ModuleMapper;
 
 export type FindDependency = (name: string, dependencies: RouterDependencies) => void;

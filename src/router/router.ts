@@ -166,7 +166,6 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
-  console.log(this.routes[""]);
   return path !== "" ? routeFinderFactory(path)(path.split("/"), this.routes[""], method, []) : this.routes[""][method];
 };
 
@@ -245,7 +244,7 @@ router.mapper = function (parent = "", _module = null) {
     if (route?.loadChildren) {
       route
         .loadChildren()
-        .then(mapModules(this, _module ?? { path: route.path }))
+        .then(mapModules(this, route.path, _module ?? { path: route.path }))
         .catch((error) => console.log(error));
     }
   };
