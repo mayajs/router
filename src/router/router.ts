@@ -79,46 +79,47 @@ function propsControllerMapper({ _this, path, controller, route, methods }: Mapp
   };
 }
 
-function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
-  return (key: RequestMethod | "loadChildren"): void => {
-    if (key === "loadChildren" && route.path !== "") {
-      _this.routes[""][route.path] = {} as any;
-    }
-
+function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
+  return (key: RequestMethod) => {
     if (methods.includes(key) && route.hasOwnProperty("controller")) {
       throw new Error(`Property controller can't be used with ${key} method on route '${path}'`);
     }
 
-    // Check if key is a method
-    if (methods.includes(key) && !route.hasOwnProperty("controller")) {
-      // Get current method
-      const current = route[key] as RouteMethod;
+    // Get current method
+    const current = route[key] as RouteMethod;
 
-      // Set default middlewares from route
-      let middlewares = route?.middlewares ?? [];
+    // Set default middlewares from route
+    let middlewares = route?.middlewares ?? [];
 
-      let guards = route?.guards ?? [];
+    let guards = route?.guards ?? [];
 
-      // Check if current method has middlewares
-      if (current?.middlewares) {
-        middlewares = [...middlewares, ...current.middlewares];
-      }
+    // Check if current method has middlewares
+    if (current?.middlewares) {
+      middlewares = [...middlewares, ...current.middlewares];
+    }
 
-      const routeCallback = (args: any) => (route[key] as RouteCallback)(args);
+    const routeCallback = (args: any) => (route[key] as RouteCallback)(args);
 
-      // Create callback function
-      const callback = current?.callback ?? routeCallback;
+    // Create callback function
+    const callback = current?.callback ?? routeCallback;
 
-      const options = {
-        middlewares: [..._this.routes[""].middlewares, ...guards, ...middlewares],
-        dependencies: [],
-        method: key as RequestMethod,
-        regex: regex(path),
-        callback,
-        path,
-      };
+    const options = {
+      middlewares: [..._this.routes[""].middlewares, ...guards, ...middlewares],
+      dependencies: [],
+      method: key,
+      regex: regex(path),
+      callback,
+      path,
+    };
 
-      createCommonRoute(_this, path.split("/"), _this.routes[""], key as RequestMethod, options, route);
+    createCommonRoute(_this, path.split("/"), _this.routes[""], key, options, route);
+  };
+}
+
+function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
+  return (key: RequestMethod | "loadChildren"): void => {
+    if (key === "loadChildren" && route.path !== "") {
+      _this.routes[""][route.path] = {} as any;
     }
   };
 }
@@ -147,6 +148,11 @@ router.addRouteToList = function (route, _module) {
     controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
   }
 
+  const routeKeys = Object.keys(route) as (RequestMethod | "loadChildren")[];
+  const routeMethods = routeKeys.filter((key) => methods.includes(key.toUpperCase()));
+
+  if (routeMethods.length > 0) (routeMethods as RequestMethod[]).forEach(addRouteMethod(mapperArgs));
+
   if (!route?.controller) {
     const methodsChildrenArray = Object.keys(route) as (RequestMethod | "loadChildren")[];
     methodsChildrenArray.forEach(loadChildrenMapper(mapperArgs));
@@ -154,6 +160,7 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
+  console.log(this.routes[""]);
   return path !== "" ? routeFinderFactory(path)(path.split("/"), this.routes[""], method, []) : this.routes[""][method];
 };
 
