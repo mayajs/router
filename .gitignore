@@ -18,6 +18,7 @@ class
 interface
 types
 */temp-package.json
+!src/*
 
 # Runtime data
 pids
