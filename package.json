@@ -8,8 +8,7 @@
     "tgz": "rimraf *.tgz",
     "package": "node ./scripts/clean-package.js",
     "start": "npm run clean && npm run tgz && tsc -w",
-    "prepack": "npm run clean && npm run package && tsc --outDir .",
-    "postpublish": "node ./scripts/restore-package.js"
+    "prepack": "npm run clean && npm run package && tsc --outDir ."
   },
   "keywords": [
     "nodejs",
