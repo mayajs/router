@@ -77,10 +77,19 @@ export function statusCodeFactory(res: MayaJsResponse) {
   };
 }
 
-export function mapParamRoute(routes: RouteBody): RouteBody {
+function routeBuilder(routes: RouteBody, isOptions: boolean, middlewares: Middlewares[], cb1: () => MayaJsRoute, cb2: (m: Middlewares[]) => MayaJsRoute) {
+  routes?.middlewares?.map((item) => middlewares.push(item));
+  return !isOptions ? cb1() : cb2(middlewares);
+}
+
+function getParamKeys(routes: RouteBody) {
   const keys = ["middlewares", "GET", "POST", "DELETE", "OPTIONS", "PUT", "PATCH"];
-  const pattern = /:[\w|-]+$/;
-  const key = Object.keys(routes).filter((route) => !keys.includes(route) && pattern.test(route))[0];
+  const pattern = /:[\w-]+$/;
+  return Object.keys(routes).filter((route) => !keys.includes(route) && pattern.test(route));
+}
+
+export function mapParamRoute(routes: RouteBody): RouteBody {
+  const key = getParamKeys(routes)[0];
   return routes[key] as RouteBody;
 }
 
@@ -89,24 +98,30 @@ export function routeFinderFactory(path: string) {
     const current = paths[0];
     const isEnd = paths.length === 1;
     const isOptions = method === "OPTIONS";
-    const route = (routes?.[current] ?? mapParamRoute(routes)) as RouteBody;
+    const nextPath = [...paths];
+    const tempMiddlewares = [...middlewares];
+    nextPath.shift();
 
-    routes?.middlewares?.map((item) => middlewares.push(item));
+    let route = routes?.[current] as RouteBody;
+    const paramKeys = getParamKeys(routes);
+
+    const isOptionRoute = () => route[method];
+    const isMethodRoute = (m: Middlewares[]) => ({ middlewares: m, method, regex: regex(path), callback: () => undefined, path });
+
+    if (!route && paramKeys.length > 0) {
+      for (const key of paramKeys) {
+        route = routes[key] as RouteBody;
+
+        if (!route) continue;
+        if (isEnd) return routeBuilder(routes, isOptions, tempMiddlewares, isOptionRoute, isMethodRoute);
+        const hasRoute = routeFinder(nextPath, route, method, tempMiddlewares);
+        if (hasRoute) return hasRoute;
+      }
+    }
 
     if (!route) return null;
-    if (isEnd && !isOptions) return route[method];
-    if (isEnd && isOptions)
-      return {
-        middlewares,
-        method,
-        regex: regex(path),
-        callback: () => {
-          /* This is intentional */
-        },
-        path,
-      };
+    if (isEnd) return routeBuilder(routes, isOptions, tempMiddlewares, isOptionRoute, isMethodRoute);
 
-    paths.shift();
-    return routeFinder(paths, route, method, middlewares);
+    return routeFinder(nextPath, route, method, middlewares);
   };
 }
