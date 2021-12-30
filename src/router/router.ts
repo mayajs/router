@@ -104,8 +104,6 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
     // Create callback function
     const callback = current?.callback ?? routeCallback;
 
-    // const mainMiddlewares = path === "" ? [] : [..._this.routes[""].middlewares];
-
     const options = {
       middlewares: [...guards, ...middlewares],
       dependencies: [],
@@ -169,11 +167,6 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
-  console.log((this.routes[""] as any).api.v1.users.roles[":userId"][":roleId"]);
-  console.log(path);
-
-  // console.log(this.routes[""]);
-
   return path !== "" ? routeFinderFactory(path)(path.split("/"), this.routes[""], method, []) : this.routes[""][method];
 };
 
