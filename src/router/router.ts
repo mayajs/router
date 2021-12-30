@@ -54,7 +54,8 @@ function routerMapper({ _this, path, controller, route }: RouterMapperArgs) {
     const parentRoute = path === "" ? "/" : path;
 
     routePath = routePath.startsWith("/") ? routePath : `/${routePath}`;
-    middlewares = [..._this.routes[""].middlewares, ..._this.middlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
+    const defaultMiddlewares = [..._this.routes[""].middlewares, ..._this.middlewares];
+    middlewares = [...defaultMiddlewares, ...(route?.middlewares ?? []), ...(route?.guards ?? []), ...middlewares];
 
     // Add controller route to list
     _this.addRouteToList({ path: sanitizePath(parentRoute + routePath), middlewares, [requestMethod]: callback });
@@ -94,7 +95,7 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
     let guards = route?.guards ?? [];
 
     // Check if current method has middlewares
-    if (current?.middlewares) {
+    if (current?.middlewares?.length) {
       middlewares = [...middlewares, ...current.middlewares];
     }
 
@@ -103,8 +104,10 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
     // Create callback function
     const callback = current?.callback ?? routeCallback;
 
+    // const mainMiddlewares = path === "" ? [] : [..._this.routes[""].middlewares];
+
     const options = {
-      middlewares: [..._this.routes[""].middlewares, ...guards, ...middlewares],
+      middlewares: [...guards, ...middlewares],
       dependencies: [],
       method: key,
       regex: regex(path),
@@ -166,6 +169,11 @@ router.addRouteToList = function (route, _module) {
 };
 
 router.findRoute = function (path, method) {
+  console.log((this.routes[""] as any).api.v1.users.roles[":userId"][":roleId"]);
+  console.log(path);
+
+  // console.log(this.routes[""]);
+
   return path !== "" ? routeFinderFactory(path)(path.split("/"), this.routes[""], method, []) : this.routes[""][method];
 };
 
