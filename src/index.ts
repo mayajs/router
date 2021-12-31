@@ -1,5 +1,5 @@
 import { MayaJsRouter, Route } from "./interface";
-import { ExpressJsMiddleware, MayaJsMiddleware } from "./types";
+import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares } from "./types";
 import { CustomModule } from "./class";
 import app from "./router";
 
@@ -44,6 +44,8 @@ function maya(): MayaJsRouter {
   return app;
 }
 
+const use = (plugin: Middlewares) => app.use(plugin);
+
 export class RouterModule extends CustomModule {
   static routes: Route[] = [];
   static isRoot = false;
@@ -62,4 +64,5 @@ export class RouterModule extends CustomModule {
   }
 }
 
+export { use };
 export default maya;
