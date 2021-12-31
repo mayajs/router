@@ -39,7 +39,7 @@ app.init = function () {
 
 app.use = function (plugin) {
   // Add middleware to the list
-  if (plugin) this.router.middlewares.push(plugin);
+  if (plugin) this.router.routes[""].middlewares.push(plugin);
 
   return this;
 };
