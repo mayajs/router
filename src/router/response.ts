@@ -13,7 +13,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
 
   return merge(res, {
     send(value: any, statusCode = 200) {
-      statusCode = this.statusCode ?? statusCode;
+      statusCode = statusCode ?? this.statusCode;
       const isText = typeof value === "string";
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
@@ -27,11 +27,11 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       endResponse(value);
     },
     json(json: object, statusCode = 200) {
-      res.writeHead(this.statusCode ?? statusCode, contentType[1]);
+      res.writeHead(statusCode, contentType[1]);
       endResponse(JSON.stringify(json));
     },
     html(html: string, statusCode = 200) {
-      res.writeHead(this.statusCode ?? statusCode, contentType[2]);
+      res.writeHead(statusCode, contentType[2]);
       endResponse(html);
     },
     status(code: number) {
