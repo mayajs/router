@@ -4,12 +4,11 @@
   "description": "Simple NodeJS routing library created using Typescript",
   "main": "lib/index.js",
   "scripts": {
-    "rimraf": "rimraf interface && rimraf index.js && rimraf index.d.ts && rimraf utils && rimraf router && rimraf lib && rimraf class && rimraf exceptions && rimraf types",
-    "clean": "npm run rimraf && npm run tgz",
+    "clean": "rimraf interface && rimraf index.js && rimraf index.d.ts && rimraf utils && rimraf router && rimraf lib && rimraf class && rimraf exceptions && rimraf types",
     "tgz": "rimraf *.tgz",
-    "start": "npm run clean && tsc -w",
-    "prepack": "npm run clean && tsc --outDir .",
-    "postpack": "npm run clean"
+    "package": "node ./scripts/clean-package.js",
+    "start": "npm run clean && npm run tgz && tsc -w",
+    "prepack": "npm run clean && npm run package && tsc --outDir ."
   },
   "keywords": [
     "nodejs",
