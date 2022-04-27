@@ -18,7 +18,10 @@ function middleware(middlewares: Middlewares[], ctx: MayaJsContext, callback: an
   const current = middlewares[0];
 
   // Create next function
-  const next = (error: any) => middleware(middlewares.slice(1), { ...context, req, res, error }, callback, error);
+  const next = (error: any) => {
+    if (error) return res.send(error, 400);
+    return middleware(middlewares.slice(1), { ...context, req, res, error }, callback, error);
+  };
 
   // Create middleware for express
   const expressMiddleware = () => (message ? (<ExpressJsMiddlewareError>current)(message, req, res, next) : (<ExpressJsMiddleware>current)(req, res, next));
