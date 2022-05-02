@@ -46,6 +46,7 @@ function refreshScript() {
         });
 
         ws.addEventListener('close',  () => {
+          refresh = true;
         });
 
         ws.addEventListener('error',  () => {
