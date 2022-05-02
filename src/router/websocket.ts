@@ -39,6 +39,7 @@ function refreshScript() {
         ws.addEventListener('open', () => {
           console.log("\x1b[32m[mayajs] MayaJS is running on development mode.");
 
+          clearInterval(interval);
           hasError = false;
           resolve();
 
@@ -53,6 +54,7 @@ function refreshScript() {
         });
 
         ws.addEventListener('error',  () => {
+            clearInterval(interval);
           hasError = true;
           refresh = true;
         });
