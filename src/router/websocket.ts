@@ -34,7 +34,7 @@ function refreshScript() {
     }
 
     async function refreshPage(){
-      let  = new WebSocket("ws://localhost:${port}");
+      let ws = new WebSocket("ws://localhost:${port}");
 
       return new Promise((resolve, reject) => {
         ws.addEventListener('open', () => {
