@@ -7,6 +7,8 @@ const clients: WebSocket[] = [];
 const port = 6969;
 
 function websocket() {
+  HAS_KILLED = false;
+
   WSS = new WebSocket.Server({ port });
 
   WSS.on("connection", (ws: WebSocket) => {
