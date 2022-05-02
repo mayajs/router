@@ -21,4 +21,7 @@ function websocket() {
 }
 
 function wsDisconnect() {
+  if (!HAS_KILLED) {
+    clients.forEach((ws) => ws.close());
+  }
 }
