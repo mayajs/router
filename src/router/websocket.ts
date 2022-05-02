@@ -19,3 +19,6 @@ function websocket() {
     clients.push(ws);
   });
 }
+
+function wsDisconnect() {
+}
