@@ -55,6 +55,7 @@ function refreshScript() {
 
         ws.addEventListener('error',  () => {
             clearInterval(interval);
+          ws.close();
           hasError = true;
           refresh = true;
         });
