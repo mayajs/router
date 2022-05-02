@@ -2,6 +2,7 @@ import { MayaJsContext, MayaRouter, RouterContext, RouterProps, VisitedRoutes } 
 import { ResponseSender } from "../types";
 import middleware from "./middleware";
 import functions from "./router";
+import { websocket, wsDisconnect } from "./websocket";
 
 export const props: RouterProps = {
   routes: { "": { middlewares: [] } as any },
@@ -35,6 +36,10 @@ app.add = function (routes) {
 app.init = function () {
   // Initialize mayajs router
   this.router = functions({ ...app });
+
+  websocket();
+
+  process.on("SIGKILL", wsDisconnect).on("SIGINT", wsDisconnect).on("exit", wsDisconnect).on("disconnect", wsDisconnect);
 };
 
 app.use = function (plugin) {
