@@ -51,6 +51,10 @@ function refreshScript() {
 
         ws.addEventListener('close',  () => {
           refresh = true;
+
+          if(!hasError){
+            console.log("\x1b[32m[mayajs] Refreshing browser");
+          }
         });
 
         ws.addEventListener('error',  () => {
