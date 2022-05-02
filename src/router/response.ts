@@ -34,7 +34,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
     },
     json(json: object, statusCode = 200) {
       res.writeHead(statusCode, contentType[1]);
-      endResponse(JSON.stringify(json));
+      return JSON.stringify(json);
     },
     html(html: string, statusCode = 200) {
       res.writeHead(statusCode, contentType[2]);
