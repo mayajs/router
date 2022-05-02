@@ -4,3 +4,4 @@ let WSS: WebSocket.Server<WebSocket.WebSocket>;
 let HAS_KILLED = false;
 
 const clients: WebSocket[] = [];
+const port = 6969;
