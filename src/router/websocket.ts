@@ -5,3 +5,6 @@ let HAS_KILLED = false;
 
 const clients: WebSocket[] = [];
 const port = 6969;
+
+function websocket() {
+}
