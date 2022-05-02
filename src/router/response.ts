@@ -17,14 +17,14 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       const isText = typeof value === "string";
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
-
-      if (!isText) return this.json(value?.message && isError ? { message: value?.message } : value, code);
-
       const htmlPattern = /<([^>]+?)([^>]*?)>(.*?)<\/\1>/gi;
-      if (htmlPattern.test(value)) return this.html(value);
+      try {
+        if (!isText) response = this.json(value?.message && isError ? { message: value?.message } : value, code);
+      }
+      } catch (error) {
+      }
 
-      res.writeHead(code, contentType[0]);
-      endResponse(value);
+      endResponse(response);
     },
     json(json: object, statusCode = 200) {
       res.writeHead(statusCode, contentType[1]);
