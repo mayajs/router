@@ -26,7 +26,7 @@ function refreshScript() {
   return `<script>
     let hasError = false;
     let refresh = false;
-    let interval = setInterval(waitConnection, 3000);
+    let interval = setInterval(waitConnection, 2000);
 
     async function waitConnection(){
       if (!openedSocketFlag ) await refreshPage();
