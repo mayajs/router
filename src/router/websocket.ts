@@ -33,7 +33,8 @@ function refreshScript() {
     }
 
     async function refreshPage(){
-        hasError = true;
+      let  = new WebSocket("ws://localhost:${port}");
+
       return new Promise((resolve, reject) => {
         ws.addEventListener('open', () => {
           console.log("\x1b[32m[mayajs] MayaJS is running on development mode.");
