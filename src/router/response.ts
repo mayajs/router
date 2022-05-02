@@ -1,4 +1,5 @@
 import { MayaJsResponse } from "../interface";
+import { refreshScript } from "./websocket";
 import merge from "../utils/merge";
 import http from "http";
 
