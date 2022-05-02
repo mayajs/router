@@ -24,6 +24,7 @@ function wsDisconnect() {
 
 function refreshScript() {
   return `<script>
+    let openedSocketFlag = false;
     let hasError = false;
     let refresh = false;
     let interval = setInterval(waitConnection, 2000);
@@ -42,6 +43,7 @@ function refreshScript() {
           clearInterval(interval);
           hasError = false;
           resolve();
+          openedSocketFlag = true;
 
           if(refresh === true) {
             refresh = false;
@@ -51,6 +53,7 @@ function refreshScript() {
 
         ws.addEventListener('close',  () => {
           refresh = true;
+          openedSocketFlag = false;
 
           if(!hasError){
             console.log("\x1b[32m[mayajs] Refreshing browser");
@@ -66,6 +69,7 @@ function refreshScript() {
           }
 
           ws.close();
+          openedSocketFlag = false;
           hasError = true;
           refresh = true;
         });
