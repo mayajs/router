@@ -39,8 +39,10 @@ function refreshScript() {
           openedSocketFlag = true;
 
           hasError = false;
+          resolve();
+
+          if(refresh === true) {
             refresh = false;
-            resolve();
             window.location.reload();
           }
         });
