@@ -58,3 +58,6 @@ function refreshScript() {
       })
     }
   </script>`;
+}
+
+export { websocket, wsDisconnect, refreshScript };
