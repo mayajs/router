@@ -36,7 +36,7 @@ function refreshScript() {
         hasError = true;
       return new Promise((resolve, reject) => {
         ws.addEventListener('open', () => {
-          openedSocketFlag = true;
+          console.log("\x1b[32m[mayajs] MayaJS is running on development mode.");
 
           hasError = false;
           resolve();
