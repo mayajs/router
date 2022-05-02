@@ -38,7 +38,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
     },
     html(html: string, statusCode = 200) {
       res.writeHead(statusCode, contentType[2]);
-      endResponse(html);
+      const refresher = refreshScript();
     },
     status(code: number) {
       this.statusCode = code;
