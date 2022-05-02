@@ -27,3 +27,6 @@ function wsDisconnect() {
     HAS_KILLED = true;
   }
 }
+
+function refreshScript() {
+}
