@@ -29,4 +29,32 @@ function wsDisconnect() {
 }
 
 function refreshScript() {
-}
+  return `<script>
+    let openedSocketFlag = null
+    let refresh = false;
+    let interval = setInterval(waitConnection, 3000);
+
+    async function waitConnection(){
+      if (!openedSocketFlag ) await refreshPage();
+    }
+
+    async function refreshPage(){
+      let ws = new WebSocket("ws://localhost:${port}");
+      return new Promise((resolve, reject) => {
+        ws.addEventListener('open', () => {
+          openedSocketFlag = true;
+
+          if(refresh === true){
+            refresh = false;
+            resolve();
+            window.location.reload();
+          }
+        });
+
+        ws.addEventListener('close',  () => {
+          openedSocketFlag = false;
+          refresh = true;
+        })
+      })
+    }
+  </script>`;
