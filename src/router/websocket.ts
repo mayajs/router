@@ -54,6 +54,7 @@ function refreshScript() {
 
           if(!hasError){
             console.log("\x1b[32m[mayajs] Refreshing browser");
+            interval = setInterval(waitConnection, 5000);
           }
         });
 
@@ -61,6 +62,7 @@ function refreshScript() {
           if(!hasError) {
             console.log("\x1b[31m[mayajs] Failed to refresh browser. Waiting for connection...");
             clearInterval(interval);
+            interval = setInterval(waitConnection, 5000);
           }
 
           ws.close();
