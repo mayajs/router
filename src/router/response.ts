@@ -41,6 +41,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       res.writeHead(statusCode, contentType[2]);
       const refresher = refreshScript();
       const body = (value: string) => (value.includes("<body>") ? value : `<body>${value}</body>`);
+      return body(html).replace(/<\/body>/i, `${refresher}</body>`);
     },
     status(code: number) {
       this.statusCode = code;
