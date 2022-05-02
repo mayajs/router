@@ -27,6 +27,7 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
       } catch (error) {
         const message = `${error}`.replace(/file:\/\/\/[A-Z]:.+\/(?=src)|^\s*at.*\)\n?|\(.+\n?/gm, "");
         response = JSON.stringify({ status: "error", message });
+        if (isText) res.writeHead(500, contentType[0]);
       }
 
       endResponse(response);
