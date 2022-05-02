@@ -24,7 +24,7 @@ function wsDisconnect() {
 
 function refreshScript() {
   return `<script>
-    let openedSocketFlag = null
+    let hasError = false;
     let refresh = false;
     let interval = setInterval(waitConnection, 3000);
 
@@ -33,12 +33,12 @@ function refreshScript() {
     }
 
     async function refreshPage(){
-      let ws = new WebSocket("ws://localhost:${port}");
+        hasError = true;
       return new Promise((resolve, reject) => {
         ws.addEventListener('open', () => {
           openedSocketFlag = true;
 
-          if(refresh === true){
+          hasError = false;
             refresh = false;
             resolve();
             window.location.reload();
@@ -46,10 +46,10 @@ function refreshScript() {
         });
 
         ws.addEventListener('close',  () => {
-          openedSocketFlag = false;
+          hasError = true;
           refresh = true;
-        })
-      })
+        });
+      });
     }
   </script>`;
 }
