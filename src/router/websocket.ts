@@ -7,4 +7,5 @@ const clients: WebSocket[] = [];
 const port = 6969;
 
 function websocket() {
+  WSS = new WebSocket.Server({ port });
 }
