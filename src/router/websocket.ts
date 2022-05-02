@@ -58,7 +58,11 @@ function refreshScript() {
         });
 
         ws.addEventListener('error',  () => {
+          if(!hasError) {
+            console.log("\x1b[31m[mayajs] Failed to refresh browser. Waiting for connection...");
             clearInterval(interval);
+          }
+
           ws.close();
           hasError = true;
           refresh = true;
