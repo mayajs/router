@@ -8,9 +8,12 @@ const port = 6969;
 
 function websocket() {
   WSS = new WebSocket.Server({ port });
+
   WSS.on("connection", (ws: WebSocket) => {
     ws.on("close", () => {
       console.log("\x1b[32m[mayajs] Refresh browser");
     });
+
+    clients.push(ws);
   });
 }
