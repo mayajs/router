@@ -27,7 +27,14 @@ interface MapperArgs extends RouterMapperArgs {
   methods: string[];
 }
 
-function createCommonRoute(_this: RouterMethods, routePath: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
+function createCommonRoute(
+  _this: RouterMethods,
+  routePath: string[],
+  routeBody: RouteBody,
+  key: RequestMethod,
+  options: MayaJsRoute,
+  parentRoute: Route
+): void {
   const current = routePath[0];
 
   if ((parentRoute?.path === "" || !parentRoute?.path) && current === "") {
