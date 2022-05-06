@@ -17,3 +17,5 @@ export enum MethodNames {
   options = "OPTIONS",
   head = "HEAD",
 }
+
+export const PRIMITIVES = ["String", "Boolean", "Function", "Array"];
