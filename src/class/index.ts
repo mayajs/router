@@ -35,7 +35,7 @@ export class Controller {
   HEAD = (_ctx: MayaJsContext): Promise<any> | any => null;
 }
 
-export abstract class CustomModule extends Module {
+export class CustomModule extends Module {
   __mod__ = true;
   bootstrap: Type<Controller> | null = null;
   key = "";
