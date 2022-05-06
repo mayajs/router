@@ -29,6 +29,7 @@ export class Controller {
   dependencies: (Type<Services> | Class)[] = [];
   GET = CONTROLLER_METHODS;
   POST = CONTROLLER_METHODS;
+  PUT = CONTROLLER_METHODS;
 }
 
 export class CustomModule extends Module {
