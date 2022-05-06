@@ -119,7 +119,7 @@ async function send(context: RouterContext): Promise<void> {
       );
     }
 
-  try {
+    // Set headers to the response
     Object.keys(app.headers).forEach((key) => res.setHeader(key, app.headers[key]));
 
     // Create MayaJS params
