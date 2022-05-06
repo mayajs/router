@@ -1,5 +1,6 @@
 export const CONTROLLER_ROUTES = "__control:routes__";
 export const INJECTABLE = "__injectable__";
+export const ROOT = "__root__";
 export const DESIGN_PARAMS = "design:paramtypes";
 export const DEPS = "__deps__";
 export const MODULE = "__mod__";
