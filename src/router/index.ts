@@ -10,7 +10,7 @@ async function handler(req: MayaJsRequest, res: MayaJsResponse) {
   const protocol = req.headers.referer ? req.headers.referer.split(":")[0] : "http";
   const fullUrl = protocol + "://" + req.headers.host;
   const parsedURL = new URL(req.url || "", fullUrl);
-  const path = parsedURL.pathname.replace(/(^\/+)|(\/+$)/g, "");
+  const path = pathUrl(parsedURL.pathname);
   const query = Object.fromEntries(parsedURL.searchParams);
   const headers = req.headers;
   const method = (req.method || "") as RequestMethod;
