@@ -35,9 +35,8 @@ export class Controller {
   HEAD = (_ctx: MayaJsContext): Promise<any> | any => null;
 }
 
-export abstract class CustomModule extends MayaJsModule {
-  invoke() {
-    /* This is intentional */
+export abstract class CustomModule extends Module {
+  constructor(..._args: any) {
   }
   static forRoot(..._args: any): ModuleWithProviders {
     return { module: CustomModule, providers: [] };
