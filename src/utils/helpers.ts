@@ -1,5 +1,4 @@
-import { MayaJsResponse, MayaJsRoute, RouteBody, RouterDependencies, RouterProps, Type } from "../interface";
-import { Middlewares, ParentModule, RequestMethod } from "../types";
+import { DEPS, PRIMITIVES } from "./constants";
 import { Services } from "../class";
 import regex from "./regex";
 
@@ -52,12 +51,10 @@ const findDependency = (name: string, dependencies: RouterDependencies, props: R
 };
 
 export function mapDependencies(routerDep: RouterDependencies, _module?: ParentModule, dependencies?: any[]) {
-  const props = getFunctionProps<RouterProps>(mapDependencies);
   const _dependencies = dependencies ?? _module?.dependencies;
-  const primitives = ["String", "Boolean", "Function", "Array"];
 
   const mapDependencyItems = ({ name }: any) => {
-    if (primitives.includes(name)) return undefined;
+    if (PRIMITIVES.includes(name)) return undefined;
 
     const dependency = findDependency(name, routerDep, props, _module);
 
