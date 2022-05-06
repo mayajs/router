@@ -38,6 +38,8 @@ export class Controller {
 export abstract class CustomModule extends Module {
   __mod__ = true;
   bootstrap: Type<Controller> | null = null;
+  key = "";
+
   constructor(..._args: any) {
     super();
   }
