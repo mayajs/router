@@ -36,6 +36,7 @@ export class Controller {
 }
 
 export abstract class CustomModule extends Module {
+  __mod__ = true;
   constructor(..._args: any) {
     super();
   }
