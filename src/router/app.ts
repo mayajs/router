@@ -95,6 +95,7 @@ function controllerRouteBuilder(
       selectedRoute = route;
       return true;
     });
+    if (!selectedRoute) throw new Error(`${options.method}: '${options.path}' was not found!`);
   }
 
 }
