@@ -77,16 +77,35 @@ function routesMapper(
   options: { path: string; context: RouterContext; method: RequestMethod },
   callback: (options: { params: { [x: string]: string }; route?: MayaJsRoute }) => boolean
 ): (item: Route) => boolean | undefined {
+  // Extract method, path and context from the options
   const { method, path, context } = options;
+
+  // Return a function that will be called when the route is found
   return (item: Route) => {
+    // Create a route path
     const routePath = pathUrl(item.path);
+
+    // Create a route regex pattern
     const pathRegex = regex(routePath);
+
+    // Checked if the route path matches the current path
     const matched = pathRegex.exec("/" + path);
+
+    // Check `path` if does not match and immediately exit
     if (!matched) return false;
+
+    // Check `path` if matches and add params to the current context
     if (matched.groups) context.params = { ...context.params, ...matched.groups };
+
+    // Check if the route is a controller route
     if (item?.controller) {
+      // Create a build options for controller route builder
       const buildOptions = { controller: item?.controller, path: ("/" + path).replace(pathRegex, ""), method };
+
+      // Build the controller route
       const controllerRoute = controllerRouteBuilder(app.router.root, buildOptions);
+
+      // Return a callback with the controller route
       return callback(controllerRoute);
     }
   };
