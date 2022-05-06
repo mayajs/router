@@ -11,6 +11,7 @@ import { DEPS } from "../utils/constants";
 // Export default route object
 const router: RouterMethods = {
   addRouteToList: (_path, _method) => null,
+  findRoute: (_path, _method) => null,
   ...props,
 };
 
