@@ -13,6 +13,7 @@ export abstract class Module {
   imports: ModuleWithProviders[] = [];
   exports: (ModuleCustomType | ControllerType)[] = [];
   providers: ModuleProviders[] = [];
+  dependencies: (Type<any> | Class)[] = [];
   parent: ParentModule = null;
   path = "";
 }
