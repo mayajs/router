@@ -97,6 +97,9 @@ function controllerRouteBuilder(
     });
     if (!selectedRoute) throw new Error(`${options.method}: '${options.path}' was not found!`);
     return { params, route: selectedRoute };
+  } else {
+    //  TODO : If no routes are found
+    // const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
   }
 
   return { params, route: selectedRoute };
