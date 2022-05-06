@@ -59,8 +59,13 @@ app.use = function (plugin) {
   return this;
 };
 
-// Sends a response message and ending the request
-const send: ResponseSender = async (context: RouterContext) => {
+function controllerRouteBuilder(
+  _module: Module,
+  options: { path: string; controller: Type<any>; method: RequestMethod }
+): { params: { [x: string]: string }; route?: MayaJsRoute } {
+}
+
+async function send(context: RouterContext): Promise<void> {
   // Get method, path and res in context object
   const { method, path, res } = context;
 
@@ -95,7 +100,7 @@ const send: ResponseSender = async (context: RouterContext) => {
     // Send error back to client
     res.send(error);
   }
-};
+}
 
 // Export app instance and send function
 export { app, send };
