@@ -111,6 +111,7 @@ async function send(context: RouterContext): Promise<void> {
     } else {
       app.router.root.routes.some(
         routesMapper({ method, path, context }, (result) => {
+          if (!result.route) return false;
         })
       );
     }
