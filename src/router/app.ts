@@ -74,34 +74,76 @@ function controllerRouteBuilder(
   _module: Module,
   options: { path: string; controller: Type<any>; method: RequestMethod }
 ): { params: { [x: string]: string }; route?: MayaJsRoute } {
+  // Get controller dependencies from metadata or from option
   const deps = Reflect.getMetadata(DEPS, options.controller) || options.controller.dependencies;
+
+  // Get routes from metadata or from option
   const routes = Reflect.getMetadata(CONTROLLER_ROUTES, options.controller) as MethodRoute[];
+
+  // Map dependencies to the current module
   const dependencies = mapDependencies(app.router.dependencies, _module, deps);
+
+  // Create a controller route
   const controller = new options.controller(...dependencies);
+
+  // Define a params object
   let params = {};
+
+  // Define a route object
   let selectedRoute: MayaJsRoute | undefined;
+
+  // Check if the controller has routes
   if (routes.length > 0) {
+    // Map routes and add each route to the routes list
     const routesBody: MayaJsRoute[] = routes.map(({ methodName, path, middlewares, requestMethod }: MethodRoute): MayaJsRoute => {
+      // Create a callback that will be called when the route is found
       const callback = (args: any) => controller[methodName as RequestMethod](args) as RouteCallback;
+
+      // Return a route object
       return { middlewares, dependencies: [], method: requestMethod, regex: regex(path), callback, path };
     });
+
+    // Map routes body
+    routesBody.some((route) => {
+      // Check if the route method is the same as the one defined in the options
       const hasMatchingMethod = options.method.toLocaleLowerCase() === route.method.toLocaleLowerCase();
+
+      // Return false if the route method is not the same
       if (!hasMatchingMethod) return false;
+
+      // Create route path
       const routePath = pathUrl(route.path);
+
+      // Create path pattern using regex
       const pathPattern = regex(routePath, true);
+
+      // Check if the path matches the one defined in the options
       const matched = pathPattern.exec(options.path);
+
+      // Return false if the route path is not the same
       if (!matched?.groups) return false;
+
+      // Set the params object
       params = { ...matched?.groups };
+
+      // Set the selected route
       selectedRoute = route;
+
+      // Return true if route is found and stop the loop
       return true;
     });
+
+    // Throw an error if the route is not found
     if (!selectedRoute) throw new Error(`${options.method}: '${options.path}' was not found!`);
+
+    // Return the route object and params object
     return { params, route: selectedRoute };
   } else {
     //  TODO : If no routes are found
     // const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
   }
 
+  // Return the route object and params object
   return { params, route: selectedRoute };
 }
 
