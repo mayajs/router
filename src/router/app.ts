@@ -15,6 +15,7 @@ export const props: RouterProps = {
 
 const app: MayaRouter = {
   init: () => null,
+  use: (_plugin) => app,
   headers: { "X-Powered-By": "MayaJS" },
   router: functions(props),
   ...props,
