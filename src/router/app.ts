@@ -27,6 +27,8 @@ app.bootstrap = function (customModule) {
   const _module = customModule as any;
   const isModule = Reflect.getMetadata(MODULE, customModule) || _module[MODULE];
   if (!isModule) throw new Error(`${customModule.name} is not a valid custom module.`);
+
+  const isBootstrap = Reflect.getMetadata(MODULE_BOOTSTRAP, customModule) || _module[MODULE_BOOTSTRAP];
 };
 
 app.add = function (routes) {
