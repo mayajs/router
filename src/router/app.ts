@@ -80,8 +80,10 @@ function controllerRouteBuilder(
   const controller = new options.controller(...dependencies);
   let params = {};
   let selectedRoute: MayaJsRoute | undefined;
-}
+  if (routes.length > 0) {
+  }
 
+}
 
 /**
  * A function that will be called when a mapping all routes.
