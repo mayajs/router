@@ -9,7 +9,7 @@ export const props: RouterProps = {
   routes: { "": { middlewares: [] } as any },
   visitedRoutes: {},
   middlewares: [],
-  context: {},
+  context: {} as any,
   dependencies: {},
 };
 
