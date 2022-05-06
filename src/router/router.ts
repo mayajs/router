@@ -186,8 +186,9 @@ router.findRoute = function (path, method) {
 
 router.executeRoute = async function (path, route) {
   const context = this.context;
-    // Try to execute route callback
-    message = await route.callback(context);
+
+  // Try to execute route callback
+  const message = await route.callback(context);
 
     if (!this.visitedRoutes[path]) {
       // Initialize path for caching
