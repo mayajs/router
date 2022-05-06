@@ -8,6 +8,7 @@ export abstract class Services {
 }
 
 export abstract class Module {
+  module: ModuleCustomType = class extends Module {};
   declarations: ControllerType[] = [];
   imports: ModuleImports[] = [];
   exports: (ModuleCustomType | ControllerType)[] = [];
