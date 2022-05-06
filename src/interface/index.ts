@@ -1,6 +1,6 @@
 import { CustomModule, Module, Services } from "../class";
 import http, { IncomingHttpHeaders } from "http";
-import { Callback, RequestMethod, ModuleCustomType, Class, Middlewares, RouteCallback, RouterMapper, RouterFunction } from "../types";
+import { Callback, RequestMethod, Class, Middlewares, RouteCallback, RouterMapper, RouterFunction } from "../types";
 
 export interface RouterFunctions {
   init: () => void;
@@ -187,7 +187,7 @@ export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodC
   /**
    * Lazy load a module
    */
-  loadChildren?: () => Promise<ModuleCustomType>;
+  loadChildren?: () => Promise<Class>;
 }
 
 export interface MayaJsRoute extends RouteMiddlewareDependencies {

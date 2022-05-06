@@ -1,4 +1,4 @@
-import { ModuleCustomType, ParentModule, ModuleMapper, ModuleMapperFactory } from "../types";
+import { Class, ParentModule, ModuleMapper, ModuleMapperFactory } from "../types";
 import { ModuleWithProviders } from "../interface";
 import { mapDependencies } from "./helpers";
 import { CustomModule } from "../class";
@@ -23,7 +23,7 @@ export const mapModules: ModuleMapperFactory =
       currentModule.providers.map((provider: any) => (<CustomModule>parentModule).providers.push(provider));
     }
 
-    if (!imported.hasOwnProperty("module")) currentModule = imported as ModuleCustomType;
+    if (!imported.hasOwnProperty("module")) currentModule = imported as Class;
     if (!currentModule) return;
 
     currentModule["path"] = path;
