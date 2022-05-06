@@ -14,6 +14,7 @@ export abstract class Module {
   exports: (ModuleCustomType | ControllerType)[] = [];
   providers: ModuleProviders[] = [];
   dependencies: (Type<any> | Class)[] = [];
+  routes: Route[] = [];
   parent: ParentModule = null;
   path = "";
 }
