@@ -59,6 +59,7 @@ export class RouterModule extends CustomModule {
 
   static forRoot(routes: Route[]): ModuleWithProviders {
     Reflect.defineMetadata(ROOT, routes, RouterModule.constructor);
+    Reflect.defineMetadata(MODULE_ROUTES, routes, RouterModule.constructor);
     return { module: RouterModule, providers: [] };
   }
 }
