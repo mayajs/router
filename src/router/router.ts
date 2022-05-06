@@ -164,6 +164,7 @@ router.addRouteToList = function (route, _module) {
     if (routes.length > 0) {
       routes.map(routerMapper({ ...mapperArgs, controller }));
     } else {
+      const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
       controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
     }
   }
