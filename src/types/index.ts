@@ -48,6 +48,8 @@ export type Class = Type<any>;
 
 export type ClassList = Class[];
 
+export type ControllerMethod = (_ctx: MayaJsContext) => Promise<any> | any;
+
 export type ModuleImports = Class | ModuleWithProviders;
 
 export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
