@@ -185,11 +185,7 @@ router.findRoute = function (path, method) {
 };
 
 router.executeRoute = async function (path, route) {
-  // Set message variable
-  let message = "";
-
-  try {
-    const context = this.context;
+  const context = this.context;
     // Try to execute route callback
     message = await route.callback(context);
 
@@ -200,11 +196,7 @@ router.executeRoute = async function (path, route) {
 
     if (!this.visitedRoutes[path][route.method]) {
       // Cache path route if not on visited routes
-      this.visitedRoutes[path][route.method] = { ...route, ...context };
-    }
-  } catch (error) {
-    // Catch error when running callback
-    message = `${(error as Error)?.message || error}`;
+    this.visitedRoutes[path][route.method] = { ...route, ...rest };
   }
 
   return message;
