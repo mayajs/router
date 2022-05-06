@@ -63,6 +63,13 @@ app.use = function (plugin) {
   return this;
 };
 
+/**
+ * A function that will be called when a mapping all controller routes.
+ *
+ * @param _module - The current module.
+ * @param options - The options that will be used to build a controller route.
+ * @returns A params and controller route.
+ */
 function controllerRouteBuilder(
   _module: Module,
   options: { path: string; controller: Type<any>; method: RequestMethod }
