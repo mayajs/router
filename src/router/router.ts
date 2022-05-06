@@ -157,7 +157,7 @@ router.addRouteToList = function (route, _module) {
   const mapperArgs = { _this: this, path, route, methods };
 
   if (route.controller && route.hasOwnProperty("controller")) {
-    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
+    const deps = Reflect.getMetadata(DEPS, route) || Reflect.getMetadata(DEPS, route.controller);
     const controller = new route.controller(...dependencies);
     const routes = controller["routes"];
 
