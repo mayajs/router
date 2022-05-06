@@ -89,6 +89,7 @@ function controllerRouteBuilder(
       if (!hasMatchingMethod) return false;
       const routePath = pathUrl(route.path);
       const pathPattern = regex(routePath, true);
+      const matched = pathPattern.exec(options.path);
     });
   }
 
