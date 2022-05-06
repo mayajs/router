@@ -26,6 +26,7 @@ const app: MayaRouter = {
 app.bootstrap = function (customModule) {
   const _module = customModule as any;
   const isModule = Reflect.getMetadata(MODULE, customModule) || _module[MODULE];
+  if (!isModule) throw new Error(`${customModule.name} is not a valid custom module.`);
 };
 
 app.add = function (routes) {
