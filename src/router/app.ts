@@ -65,6 +65,12 @@ function controllerRouteBuilder(
 ): { params: { [x: string]: string }; route?: MayaJsRoute } {
 }
 
+function routesMapper(
+  options: { path: string; context: RouterContext; method: RequestMethod },
+  callback: (options: { params: { [x: string]: string }; route?: MayaJsRoute }) => boolean
+): (item: Route) => boolean | undefined {
+}
+
 /**
  * A function that manage an incoming request.
  *
