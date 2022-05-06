@@ -77,6 +77,7 @@ function controllerRouteBuilder(
   const deps = Reflect.getMetadata(DEPS, options.controller) || options.controller.dependencies;
   const routes = Reflect.getMetadata(CONTROLLER_ROUTES, options.controller) as MethodRoute[];
   const dependencies = mapDependencies(app.router.dependencies, _module, deps);
+  const controller = new options.controller(...dependencies);
 }
 
 
