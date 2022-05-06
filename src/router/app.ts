@@ -5,6 +5,7 @@ import functions from "./router";
 import { websocket, wsDisconnect } from "./websocket";
 
 export const props: RouterProps = {
+  root: new AppRoot(),
   routes: { "": { middlewares: [] } as any },
   visitedRoutes: {},
   middlewares: [],
