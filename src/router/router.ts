@@ -128,6 +128,7 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
 }
 
 function loadChildrenMapper({ _this, route }: Omit<MapperArgs, "controller">) {
+  return (): void => {
     if (route.path !== "") {
       const createPath = (paths: string[], routes: any): void => {
         if (paths.length === 0) return;
