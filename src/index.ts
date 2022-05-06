@@ -53,7 +53,8 @@ export class RouterModule extends CustomModule {
     if (!isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
-    RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this as CustomModule));
+
+    const routes = Reflect.getMetadata(MODULE_ROUTES, RouterModule.constructor) as Route[];
   }
 
   static forRoot(routes: Route[]): ModuleWithProviders {
