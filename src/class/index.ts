@@ -7,7 +7,7 @@ export abstract class Services {
   dependencies: any[] = [];
 }
 
-export abstract class MayaJsModule {
+export abstract class Module {
   declarations: ControllerType[] = [];
   imports: ModuleImports[] = [];
   exports: (ModuleCustomType | ControllerType)[] = [];
