@@ -28,6 +28,7 @@ export class Controller {
   routes: MethodRoute[] = [];
   dependencies: (Type<Services> | Class)[] = [];
   GET = CONTROLLER_METHODS;
+  POST = CONTROLLER_METHODS;
 }
 
 export class CustomModule extends Module {
