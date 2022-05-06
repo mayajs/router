@@ -15,6 +15,7 @@ const router: RouterMethods = {
   executeRoute: (_path, _route) => Promise.resolve(),
   visitedRoute: (_path, _method) => null,
   mapper: (_path, _method) => (_route) => null,
+  moduleMapper: (_parent) => (_imported) => null,
   ...props,
 };
 
