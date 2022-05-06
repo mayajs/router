@@ -79,6 +79,7 @@ function controllerRouteBuilder(
   const dependencies = mapDependencies(app.router.dependencies, _module, deps);
   const controller = new options.controller(...dependencies);
   let params = {};
+  let selectedRoute: MayaJsRoute | undefined;
 }
 
 
