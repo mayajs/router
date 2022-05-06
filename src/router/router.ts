@@ -282,4 +282,4 @@ router.mapper = function (parent = "", _module = null) {
   };
 };
 
-export default (app: RouterProps): RouterFunction => merge(app, router);
+export default (properties: RouterProps): RouterFunction => merge(properties, router);
