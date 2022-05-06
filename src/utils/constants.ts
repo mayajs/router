@@ -13,6 +13,7 @@ export const MODULE_BOOTSTRAP = "__mod:bootstrap__";
 export const MODULE_PROVIDERS = "__mod:providers__";
 export const MODULE_CONSTANTS = { MODULE_IMPORTS, MODULE_EXPORTS, MODULE_DECLARATIONS, MODULE_BOOTSTRAP, MODULE_PROVIDERS };
 export const METHODS = ["GET", "POST", "PUT", "HEAD", "DELETE", "OPTIONS", "PATCH"];
+export const PRIMITIVES = ["String", "Boolean", "Function", "Array"];
 
 export enum MethodNames {
   get = "GET",
@@ -23,5 +24,3 @@ export enum MethodNames {
   options = "OPTIONS",
   head = "HEAD",
 }
-
-export const PRIMITIVES = ["String", "Boolean", "Function", "Array"];
