@@ -83,6 +83,7 @@ function routesMapper(
     const pathRegex = regex(routePath);
     const matched = pathRegex.exec("/" + path);
     if (!matched) return false;
+    if (matched.groups) context.params = { ...context.params, ...matched.groups };
   };
 }
 
