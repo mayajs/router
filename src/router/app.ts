@@ -86,6 +86,7 @@ function routesMapper(
     if (matched.groups) context.params = { ...context.params, ...matched.groups };
     if (item?.controller) {
       const buildOptions = { controller: item?.controller, path: ("/" + path).replace(pathRegex, ""), method };
+      const controllerRoute = controllerRouteBuilder(app.router.root, buildOptions);
     }
   };
 }
