@@ -20,7 +20,7 @@ export const logger = {
   red: (value: string) => console.log(`\x1b[31m${value}\x1b[0m`),
 };
 
-const mapProviders = (name: string, _module?: ParentModule): undefined | Type<Services> => {
+const mapProviders = (name: string, _module?: ParentModule): undefined | ModuleProviders => {
   if (!_module || !_module?.providers) return;
   const index = _module?.providers?.findIndex((item) => item.name === name);
   return index > -1 ? _module?.providers[index] : mapProviders(name, _module.parent);
