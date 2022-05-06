@@ -133,6 +133,7 @@ async function send(context: RouterContext): Promise<void> {
     };
 
     // Run middlewares before calling the main route callback
+    return middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
   } catch (error: any) {
     res.send({ message: error?.message ?? error }, 500);
   }
