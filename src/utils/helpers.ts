@@ -33,7 +33,9 @@ const findDependency = (name: string, dependencies: RouterDependencies, _module?
   let args: any[] = [];
 
   if (!provider) return;
-  if (provider?.dependencies?.length > 0) args = mapDependencies(dependencies, _module, provider.dependencies);
+
+  const deps = Reflect.getMetadata(DEPS, provider) || provider?.dependencies;
+  if (deps?.length > 0) args = mapDependencies(dependencies, _module, deps);
 
   const providerInstance: Services = new provider(...args);
   dependencies[name] = providerInstance;
