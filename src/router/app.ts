@@ -86,6 +86,7 @@ function controllerRouteBuilder(
       return { middlewares, dependencies: [], method: requestMethod, regex: regex(path), callback, path };
     });
       const hasMatchingMethod = options.method.toLocaleLowerCase() === route.method.toLocaleLowerCase();
+      if (!hasMatchingMethod) return false;
     });
   }
 
