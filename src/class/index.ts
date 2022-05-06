@@ -1,5 +1,4 @@
-import { MayaJsContext, ModuleWithProviders } from "../interface";
-import { ControllerMiddleware, ControllerType, ModuleCustomType, ModuleImports, ModuleProviders, ParentModule } from "../types";
+import { MayaJsContext, MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
 
 export abstract class Services {
   root: boolean = false;
