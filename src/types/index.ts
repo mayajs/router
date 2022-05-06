@@ -1,4 +1,4 @@
-import { CustomModule, MayaJsModule } from "../class";
+import { CustomModule, Module } from "../class";
 import { MODULE_CONSTANTS } from "../utils/constants";
 import {
   MayaJsContext,
@@ -10,7 +10,7 @@ import {
   ModuleWithProviders,
   RouterContext,
   RouterDependencies,
-  RouterMethods,
+  RouterHelper,
   RouterProps,
   Type,
 } from "../interface";
@@ -46,13 +46,11 @@ export type RouteCallback = (ctx: MayaJsContext) => Promise<any> | any;
 
 export type Class = Type<any>;
 
-export type ControllerType = Class;
+export type ClassList = Class[];
 
-export type ModuleCustomType = Class;
+export type ControllerMethod = (_ctx: MayaJsContext) => Promise<any> | any;
 
-export type ModuleProviders = Class[];
-
-export type ModuleImports = ModuleCustomType | ModuleWithProviders;
+export type ModuleImports = Class | ModuleWithProviders;
 
 export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
 
@@ -68,7 +66,7 @@ export type ControllerMiddleware = {
 
 export type ResponseSender = (context: RouterContext) => Promise<void>;
 
-export type RouterFunction = RouterProps & RouterMethods;
+export type RouterFunction = RouterProps & RouterHelper;
 
 export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: Route) => void;
 
@@ -76,7 +74,7 @@ export type RouterMapperFactory = (router: RouterFunction, app: MayaRouter, _mod
 
 export type ModuleMapper = (imported: ModuleImports) => void;
 
-export type ParentModule = CustomModule | MayaJsModule | null;
+export type ParentModule = CustomModule | Module | null;
 
 export type ModuleMapperFactory = (router: RouterFunction, path: string, parentModule?: ParentModule | { path: string }) => ModuleMapper;
 

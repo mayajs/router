@@ -29,9 +29,9 @@ jobs:
         run: npm version minor -m "Bump version to %s"
         if: github.ref == 'refs/heads/feature'
 
-      - name: Production version
+      - name: Major version
         run: npm version major -m "Bump version to %s"
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/1.0'
 
       - name: Hotfix version
         run: npm version minor -m "Bump version to %s"
