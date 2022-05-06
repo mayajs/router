@@ -2,7 +2,7 @@ import { MayaJsContext, ModuleWithProviders } from "../interface";
 import { ControllerMiddleware, ControllerType, ModuleCustomType, ModuleImports, ModuleProviders, ParentModule } from "../types";
 
 export abstract class Services {
-  __injectable__ = true;
+  injectable: boolean = true;
   dependencies: any[] = [];
 }
 
