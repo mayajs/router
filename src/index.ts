@@ -57,9 +57,7 @@ export class RouterModule extends CustomModule {
     RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this as CustomModule));
   }
 
-  static forRoot(routes: Route[]) {
-    RouterModule.isRoot = true;
-    RouterModule.routes = routes;
+  static forRoot(routes: Route[]): ModuleWithProviders {
     return { module: RouterModule, providers: [] };
   }
 }
