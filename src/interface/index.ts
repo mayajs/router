@@ -169,7 +169,7 @@ export type Type<T> = {
 };
 
 export interface ModuleWithProviders extends ModuleWithProvidersProps {
-  module: ModuleCustomType;
+  module: typeof CustomModule;
 }
 
 export interface ModuleWithProvidersProps {
