@@ -26,6 +26,18 @@ const mapProviders = (name: string, _module?: ParentModule): undefined | ModuleP
   return index > -1 ? _module?.providers[index] : mapProviders(name, _module.parent);
 };
 
+const dependencyFinder = (name: string, _module: ParentModule) => {
+  const provider = mapProviders(name, _module) as any;
+  let args: any[] = [];
+
+  if (!provider) return;
+
+  const deps = Reflect.getMetadata(DEPS, provider) || provider?.dependencies;
+
+  if (deps?.length > 0) args = dependencyMapper(_module, deps);
+
+  return new provider(...args) as Services;
+};
 const findDependency = (name: string, dependencies: RouterDependencies, _module?: ParentModule) => {
   if (dependencies[name]) return dependencies[name];
 
