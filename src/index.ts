@@ -47,8 +47,7 @@ function maya(): MayaJsRouter {
 const use = (plugin: Middlewares) => app.use(plugin);
 
 export class RouterModule extends CustomModule {
-  static routes: Route[] = [];
-  static isRoot = false;
+  invoke(parent: ParentModule) {
 
   invoke() {
     if (!RouterModule.isRoot) {
