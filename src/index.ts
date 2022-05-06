@@ -3,6 +3,7 @@ import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares, ParentModule } from
 import { MODULE_ROUTES, ROOT } from "./utils/constants";
 import { Controller, CustomModule } from "./class";
 import app from "./router";
+import "reflect-metadata";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
 export interface MayaMiddlewares extends MayaJsMiddleware {}
