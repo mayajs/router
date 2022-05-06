@@ -105,7 +105,7 @@ export interface RouterHelperMethod {
 }
 
 export interface RouterProps {
-  context: any;
+  context: RouterContext;
   routes: CommonRoutes;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
