@@ -68,6 +68,8 @@ export class RouterModule extends CustomModule {
           if (!hasFound) throw new Error(`${dependency?.name} is not declared in the module.`);
           return dependency?.dependencies?.some(findDeps) ?? true;
         };
+
+        dependencies.some(findDeps);
       }
     });
   }
