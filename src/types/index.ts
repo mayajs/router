@@ -1,4 +1,4 @@
-import { CustomModule, MayaJsModule } from "../class";
+import { CustomModule, Module } from "../class";
 import { MODULE_CONSTANTS } from "../utils/constants";
 import {
   MayaJsContext,
