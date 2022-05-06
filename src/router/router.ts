@@ -206,7 +206,7 @@ router.executeRoute = async function (path, route) {
 };
 
 router.visitedRoute = function (path, method) {
-  return this?.visitedRoutes && this?.visitedRoutes[path] && this?.visitedRoutes[path][method] ? this?.visitedRoutes[path][method] : null;
+  return this.visitedRoutes?.[path]?.[method] ?? null;
 };
 
 router.mapper = function (parent = "", _module = null) {
