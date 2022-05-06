@@ -102,6 +102,7 @@ export interface RouterHelperMethod {
   executeRoute: (path: string, route: MayaJsRoute) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
   mapper: RouterMapper;
+  moduleMapper: (parent: CustomModule) => (imported: ModuleWithProviders) => void;
 }
 
 export interface RouterProps {
