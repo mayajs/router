@@ -2,6 +2,7 @@ import { MayaJsRoute, MayaRouter, MethodRoute, Route, RouterContext, RouterProps
 import { CONTROLLER_ROUTES, DEPS, MODULE, MODULE_BOOTSTRAP } from "../utils/constants";
 import { mapDependencies, pathUrl } from "../utils/helpers";
 import { RequestMethod, RouteCallback } from "../types";
+import { AppRoot, Module } from "../class";
 import middleware from "./middleware";
 import functions from "./router";
 import { websocket, wsDisconnect } from "./websocket";
