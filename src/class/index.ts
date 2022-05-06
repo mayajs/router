@@ -26,24 +26,19 @@ export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: MethodRoute[] = [];
   dependencies: (Type<Services> | Class)[] = [];
+  GET(_ctx: MayaJsContext): Promise<any> | any {
   }
-  POST(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  POST(_ctx: MayaJsContext): Promise<any> | any {
   }
-  DELETE(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  DELETE(_ctx: MayaJsContext): Promise<any> | any {
   }
-  PUT(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  PUT(_ctx: MayaJsContext): Promise<any> | any {
   }
-  PATCH(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  PATCH(_ctx: MayaJsContext): Promise<any> | any {
   }
-  OPTIONS(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  OPTIONS(_ctx: MayaJsContext): Promise<any> | any {
   }
-  HEAD(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  HEAD(_ctx: MayaJsContext): Promise<any> | any {
   }
 }
 
