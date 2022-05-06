@@ -92,6 +92,7 @@ function controllerRouteBuilder(
       const matched = pathPattern.exec(options.path);
       if (!matched?.groups) return false;
       params = { ...matched?.groups };
+      selectedRoute = route;
     });
   }
 
