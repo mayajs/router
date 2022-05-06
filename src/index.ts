@@ -1,6 +1,4 @@
-import { MayaJsRouter, Route } from "./interface";
-import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares } from "./types";
-import { CustomModule } from "./class";
+import { MayaJsRouter, ModuleWithProviders, Route, Type } from "./interface";
 import app from "./router";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
