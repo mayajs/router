@@ -1,5 +1,5 @@
 import { MayaJsResponse, MayaJsRoute, RouteBody, RouterDependencies } from "../interface";
-import { Middlewares, ModuleProviders, ParentModule, RequestMethod } from "../types";
+import { Middlewares, Class, ParentModule, RequestMethod } from "../types";
 import { DEPS, PRIMITIVES } from "./constants";
 import { Services } from "../class";
 import regex from "./regex";
@@ -22,7 +22,7 @@ export const logger = {
   red: (value: string) => console.log(`\x1b[31m${value}\x1b[0m`),
 };
 
-const mapProviders = (name: string, _module?: ParentModule): undefined | ModuleProviders => {
+const mapProviders = (name: string, _module?: ParentModule): undefined | Class => {
   if (!_module || !_module?.providers) return;
   const index = _module?.providers?.findIndex((item) => item.name === name);
   return index > -1 ? _module?.providers[index] : mapProviders(name, _module.parent);

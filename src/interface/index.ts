@@ -1,6 +1,6 @@
 import { CustomModule, Module, Services } from "../class";
 import http, { IncomingHttpHeaders } from "http";
-import { Callback, RequestMethod, ModuleCustomType, ModuleProviders, Middlewares, RouteCallback, RouterMapper, RouterFunction, Class } from "../types";
+import { Callback, RequestMethod, ModuleCustomType, Class, Middlewares, RouteCallback, RouterMapper, RouterFunction } from "../types";
 
 export interface RouterFunctions {
   init: () => void;
@@ -162,7 +162,7 @@ export interface ModuleWithProviders extends ModuleWithProvidersProps {
 }
 
 export interface ModuleWithProvidersProps {
-  providers: ModuleProviders[];
+  providers: Class[];
   dependencies?: Type<any>[];
   imports?: ModuleWithProviders[];
 }

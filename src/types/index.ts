@@ -50,8 +50,6 @@ export type ControllerType = Class;
 
 export type ModuleCustomType = Class;
 
-export type ModuleProviders = Class;
-
 export type ModuleImports = ModuleCustomType | ModuleWithProviders;
 
 export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
