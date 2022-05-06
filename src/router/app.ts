@@ -87,6 +87,7 @@ function controllerRouteBuilder(
     });
       const hasMatchingMethod = options.method.toLocaleLowerCase() === route.method.toLocaleLowerCase();
       if (!hasMatchingMethod) return false;
+      const routePath = pathUrl(route.path);
     });
   }
 
