@@ -102,18 +102,30 @@ async function send(context: RouterContext): Promise<void> {
   // Get method, path and res in context object
   const { method, path, res } = context;
 
+  // Create a list of routes that will be used to match the current path
   try {
-  // Check if path exist in visited routes or in non-param routes
+    // Check if path exist in visited routes
     let selectedRoute: MayaJsRoute | null = app.router.visitedRoutes?.[path]?.[method] ?? null;
 
+    // Check if selected route is not null
     if (selectedRoute) {
+      // If selected route is not null, set the selected route params to the context params
       context.params = { ...context.params, ...(selectedRoute as VisitedRoutes).params };
     } else {
+      // If selected route is null, map all routes
       app.router.root.routes.some(
+        // Create a mapper function that will be called when mapping routes
         routesMapper({ method, path, context }, (result) => {
+          // Check if a route was not found and return false
           if (!result.route) return false;
+
+          // Set the selected route when route is found
           selectedRoute = result.route;
+
+          // Add params to the current context
           context.params = { ...context.params, ...result.params };
+
+          // Return true to stop the loop
           return true;
         })
       );
@@ -122,19 +134,25 @@ async function send(context: RouterContext): Promise<void> {
     // Set headers to the response
     Object.keys(app.headers).forEach((key) => res.setHeader(key, app.headers[key]));
 
+    // Create router context
     app.router.context = { ...context };
 
+    // Set route middlewares
     const middlewares = selectedRoute?.middlewares !== undefined ? selectedRoute.middlewares : [];
 
     // Create a factory method for executing current route
     const execute = async (ctx: RouterContext) => {
+      // Set the current router context
       app.router.context = ctx;
+
+      // Execute selected route
       if (selectedRoute) res.send(await app.router.executeRoute(path, selectedRoute));
     };
 
     // Run middlewares before calling the main route callback
     return middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
   } catch (error: any) {
+    // Send error to the client
     res.send({ message: error?.message ?? error }, 500);
   }
 }
