@@ -30,6 +30,8 @@ app.bootstrap = function (customModule) {
 
   const isBootstrap = Reflect.getMetadata(MODULE_BOOTSTRAP, customModule) || _module[MODULE_BOOTSTRAP];
   if (!isBootstrap) throw new Error(`Failed to bootstrap ${customModule.name} module.`);
+
+  _module.imports.forEach(this.router.moduleMapper(_module));
 };
 
 app.add = function (routes) {
