@@ -46,8 +46,6 @@ export type RouteCallback = (ctx: MayaJsContext) => Promise<any> | any;
 
 export type Class = Type<any>;
 
-export type ControllerType = Class;
-
 export type ModuleImports = Class | ModuleWithProviders;
 
 export type ExpressJsMiddleware = (req: MayaJsRequest, res: MayaJsResponse, next: MayaJsNextFunction) => void;
