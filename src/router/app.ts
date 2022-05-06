@@ -81,7 +81,9 @@ function controllerRouteBuilder(
   let params = {};
   let selectedRoute: MayaJsRoute | undefined;
   if (routes.length > 0) {
-    const routesBody: MayaJsRoute[] = routes.map(({ methodName, path, middlewares, requestMethod }: MethodRoute): MayaJsRoute => { });
+    const routesBody: MayaJsRoute[] = routes.map(({ methodName, path, middlewares, requestMethod }: MethodRoute): MayaJsRoute => {
+      const callback = (args: any) => controller[methodName as RequestMethod](args) as RouteCallback;
+    });
   }
 
 }
