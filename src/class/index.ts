@@ -37,6 +37,7 @@ export class Controller {
 
 export abstract class CustomModule extends Module {
   constructor(..._args: any) {
+    super();
   }
   static forRoot(..._args: any): ModuleWithProviders {
     return { module: CustomModule, providers: [] };
