@@ -82,6 +82,7 @@ function routesMapper(
     const routePath = pathUrl(item.path);
     const pathRegex = regex(routePath);
     const matched = pathRegex.exec("/" + path);
+    if (!matched) return false;
   };
 }
 
