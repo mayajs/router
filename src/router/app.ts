@@ -114,6 +114,7 @@ async function send(context: RouterContext): Promise<void> {
           if (!result.route) return false;
           selectedRoute = result.route;
           context.params = { ...context.params, ...result.params };
+          return true;
         })
       );
     }
