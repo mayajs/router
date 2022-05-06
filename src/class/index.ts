@@ -22,7 +22,7 @@ export abstract class Module {
 /**
  * An abstract class that define all the methods for a single route
  */
-export class MayaJsController {
+export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: any[] = [];
   GET(ctx: MayaJsContext): Promise<any> | any {
