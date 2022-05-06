@@ -1,7 +1,9 @@
-import { MayaJsRouter, Route } from "./interface";
-import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares } from "./types";
-import { CustomModule } from "./class";
+import { MayaJsRouter, ModuleWithProviders, Route, Type } from "./interface";
+import { ExpressJsMiddleware, MayaJsMiddleware, Middlewares, ParentModule } from "./types";
+import { MODULE_ROUTES, ROOT } from "./utils/constants";
+import { Controller, CustomModule } from "./class";
 import app from "./router";
+import "reflect-metadata";
 
 export interface ExpressMiddlewares extends ExpressJsMiddleware {}
 export interface MayaMiddlewares extends MayaJsMiddleware {}
@@ -47,19 +49,38 @@ function maya(): MayaJsRouter {
 const use = (plugin: Middlewares) => app.use(plugin);
 
 export class RouterModule extends CustomModule {
-  static routes: Route[] = [];
-  static isRoot = false;
+  invoke(parent: ParentModule) {
+    const isRoot = Reflect.getMetadata(ROOT, RouterModule.constructor) as boolean;
 
-  invoke() {
-    if (!RouterModule.isRoot) {
+    if (!isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
-    RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this as CustomModule));
+
+    const routes = Reflect.getMetadata(MODULE_ROUTES, RouterModule.constructor) as Route[];
+    routes.forEach((route) => {
+      const isDeclared = parent?.declarations.some((declaration) => declaration.name === route.controller?.name);
+
+      if (!isDeclared) throw new Error(`${route.controller?.name} is not declared in the module.`);
+
+      const dependencies = (route.controller as Type<Controller>).dependencies || [];
+
+      if (route.controller && dependencies.length > 0) {
+        const findDeps = (dependency: any) => {
+          const hasFound = parent?.providers.some((provider) => provider?.name === dependency.name);
+          if (!hasFound) throw new Error(`${dependency?.name} is not declared in the module.`);
+          return dependency?.dependencies?.some(findDeps) ?? true;
+        };
+
+        dependencies.some(findDeps);
+      }
+
+      parent?.routes.push(route);
+    });
   }
 
-  static forRoot(routes: Route[]) {
-    RouterModule.isRoot = true;
-    RouterModule.routes = routes;
+  static forRoot(routes: Route[]): ModuleWithProviders {
+    Reflect.defineMetadata(ROOT, routes, RouterModule.constructor);
+    Reflect.defineMetadata(MODULE_ROUTES, routes, RouterModule.constructor);
     return { module: RouterModule, providers: [] };
   }
 }

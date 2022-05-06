@@ -1,5 +1,6 @@
-import { MayaJsResponse, MayaJsRoute, RouteBody, RouterDependencies, RouterProps, Type } from "../interface";
-import { Middlewares, ParentModule, RequestMethod } from "../types";
+import { MayaJsResponse, MayaJsRoute, RouteBody, RouterDependencies } from "../interface";
+import { Middlewares, Class, ParentModule, RequestMethod } from "../types";
+import { DEPS, PRIMITIVES } from "./constants";
 import { Services } from "../class";
 import regex from "./regex";
 
@@ -17,34 +18,57 @@ export const sanitizePath = (path: string) => {
   return "/" + path;
 };
 
-export const getFunctionProps = <T>(func: Function | Object): T => {
-  const _this: any = {};
-
-  for (const prop in func) {
-    _this[prop] = (func as any)[prop];
-  }
-
-  return _this;
-};
-
 export const logger = {
   red: (value: string) => console.log(`\x1b[31m${value}\x1b[0m`),
 };
 
-const mapProviders = (name: string, _module?: ParentModule): undefined | Type<Services> => {
+const mapProviders = (name: string, _module?: ParentModule): undefined | Class => {
   if (!_module || !_module?.providers) return;
   const index = _module?.providers?.findIndex((item) => item.name === name);
   return index > -1 ? _module?.providers[index] : mapProviders(name, _module.parent);
 };
 
-const findDependency = (name: string, dependencies: RouterDependencies, props: RouterProps, _module?: ParentModule) => {
+const dependencyFinder = (name: string, _module: ParentModule) => {
+  const provider = mapProviders(name, _module) as any;
+  let args: any[] = [];
+
+  if (!provider) return;
+
+  const deps = Reflect.getMetadata(DEPS, provider) || provider?.dependencies;
+
+  if (deps?.length > 0) args = dependencyMapper(_module, deps);
+
+  return new provider(...args) as Services;
+};
+
+export function dependencyMapper(_module: ParentModule, dependencies: any[]) {
+  const _dependencies = dependencies ?? _module?.dependencies;
+
+  const mapDependencyItems = ({ name }: any) => {
+    if (PRIMITIVES.includes(name)) return undefined;
+
+    const dependency = dependencyFinder(name, _module);
+
+    if (!dependency) {
+      logger.red(`${name} is not provided properly in a module.`);
+      throw new Error();
+    }
+    return dependency;
+  };
+
+  return _dependencies ? _dependencies.map(mapDependencyItems) : [];
+}
+
+const findDependency = (name: string, dependencies: RouterDependencies, _module?: ParentModule) => {
   if (dependencies[name]) return dependencies[name];
 
   const provider = mapProviders(name, _module) as any;
   let args: any[] = [];
 
   if (!provider) return;
-  if (provider?.dependencies?.length > 0) args = mapDependencies(dependencies, _module, provider.dependencies);
+
+  const deps = Reflect.getMetadata(DEPS, provider) || provider?.dependencies;
+  if (deps?.length > 0) args = mapDependencies(dependencies, _module, deps);
 
   const providerInstance: Services = new provider(...args);
   dependencies[name] = providerInstance;
@@ -52,14 +76,12 @@ const findDependency = (name: string, dependencies: RouterDependencies, props: R
 };
 
 export function mapDependencies(routerDep: RouterDependencies, _module?: ParentModule, dependencies?: any[]) {
-  const props = getFunctionProps<RouterProps>(mapDependencies);
   const _dependencies = dependencies ?? _module?.dependencies;
-  const primitives = ["String", "Boolean", "Function", "Array"];
 
   const mapDependencyItems = ({ name }: any) => {
-    if (primitives.includes(name)) return undefined;
+    if (PRIMITIVES.includes(name)) return undefined;
 
-    const dependency = findDependency(name, routerDep, props, _module);
+    const dependency = findDependency(name, routerDep, _module);
 
     if (!dependency) {
       logger.red(`${name} is not provided properly in a module.`);
@@ -125,3 +147,5 @@ export function routeFinderFactory(path: string) {
     return routeFinder(nextPath, route, method, middlewares);
   };
 }
+
+export const pathUrl = (url: string) => url.replace(/(^\/+)|(\/+$)/g, "");

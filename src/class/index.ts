@@ -1,17 +1,21 @@
-import { MayaJsContext, ModuleWithProviders } from "../interface";
-import { ControllerMiddleware, ControllerType, ModuleCustomType, ModuleImports, ModuleProviders, ParentModule } from "../types";
+import { MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
+import { ControllerMiddleware, Class, ClassList, ParentModule } from "../types";
+import { CONTROLLER_METHODS } from "../utils/constants";
 
 export abstract class Services {
-  __injectable__ = true;
+  root: boolean = false;
+  injectable: boolean = true;
   dependencies: any[] = [];
 }
 
-export abstract class MayaJsModule {
-  declarations: ControllerType[] = [];
-  imports: ModuleImports[] = [];
-  exports: (ModuleCustomType | ControllerType)[] = [];
-  providers: ModuleProviders = [];
-  dependencies: any[] = [];
+export abstract class Module {
+  module: Class = class extends Module {};
+  declarations: ClassList = [];
+  imports: ModuleWithProviders[] = [];
+  exports: ClassList = [];
+  providers: ClassList = [];
+  dependencies: ClassList = [];
+  routes: Route[] = [];
   parent: ParentModule = null;
   path = "";
 }
@@ -19,37 +23,35 @@ export abstract class MayaJsModule {
 /**
  * An abstract class that define all the methods for a single route
  */
-export class MayaJsController {
+export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
-  routes: any[] = [];
-  GET(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  routes: MethodRoute[] = [];
+  dependencies: (Type<Services> | Class)[] = [];
+  GET = CONTROLLER_METHODS;
+  POST = CONTROLLER_METHODS;
+  PUT = CONTROLLER_METHODS;
+  PATCH = CONTROLLER_METHODS;
+  DELETE = CONTROLLER_METHODS;
+  OPTIONS = CONTROLLER_METHODS;
+  HEAD = CONTROLLER_METHODS;
+}
+
+export class CustomModule extends Module {
+  __mod__ = true;
+  bootstrap: Type<Controller> | null = null;
+  key = "";
+
+  constructor(..._args: any) {
+    super();
   }
-  POST(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+
+  invoke(_parent: ParentModule): void {
+    return;
   }
-  DELETE(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
-  }
-  PUT(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
-  }
-  PATCH(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
-  }
-  OPTIONS(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
-  }
-  HEAD(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+
+  static forRoot(..._args: any): ModuleWithProviders {
+    return { module: CustomModule, providers: [] };
   }
 }
 
-export abstract class CustomModule extends MayaJsModule {
-  invoke() {
-    /* This is intentional */
-  }
-  static forRoot(...args: any): ModuleWithProviders {
-    return { module: class extends CustomModule {}, providers: [] };
-  }
-}
+export class AppRoot extends Module {}

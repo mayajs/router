@@ -1,22 +1,21 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs } from "../interface";
-import { routeFinderFactory, logger, mapDependencies, sanitizePath } from "../utils/helpers";
+import { RouteMethod, RouterHelper, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs, ModuleWithProviders } from "../interface";
+import { routeFinderFactory, logger, mapDependencies, sanitizePath, dependencyMapper } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./app";
 import { declarationsMapper, mapModules } from "../utils/mapper";
+import { CustomModule } from "../class";
+import { DEPS } from "../utils/constants";
 
 // Export default route object
-const router: RouterMethods = {
-  addRouteToList: (route, _module) => {
-    /* This is intentional */
-  },
-  findRoute: (path, method) => null,
-  executeRoute: (path, route) => Promise.resolve(),
-  visitedRoute: (path, method) => null,
-  mapper: (path, method) => (route) => {
-    /* This is intentional */
-  },
+const router: RouterHelper = {
+  addRouteToList: (_path, _method) => null,
+  findRoute: (_path, _method) => null,
+  executeRoute: (_path, _route) => Promise.resolve(),
+  visitedRoute: (_path, _method) => null,
+  mapper: (_path, _method) => (_route) => null,
+  moduleMapper: (_parent) => (_imported) => null,
   ...props,
 };
 
@@ -24,7 +23,7 @@ interface MapperArgs extends RouterMapperArgs {
   methods: string[];
 }
 
-function createCommonRoute(_this: RouterMethods, routePath: string[], routes: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
+function createCommonRoute(_this: RouterHelper, routePath: string[], routeBody: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
   const current = routePath[0];
 
   if ((parentRoute?.path === "" || !parentRoute?.path) && current === "") {
@@ -32,17 +31,17 @@ function createCommonRoute(_this: RouterMethods, routePath: string[], routes: Ro
     return;
   }
   if (current === "" && routePath.length === 1) {
-    routes[key] = options;
+    routeBody[key] = options;
     return;
   }
-  if (!routes?.[current]) routes[current] = { middlewares: [...(parentRoute.middlewares ?? []), ...(parentRoute.guards ?? [])] } as any;
-  if (routes[current] && routePath.length === 1) {
-    (routes[current] as RouteBody)[key] = options;
+  if (!routeBody?.[current]) routeBody[current] = { middlewares: [...(parentRoute.middlewares ?? []), ...(parentRoute.guards ?? [])] } as any;
+  if (routeBody[current] && routePath.length === 1) {
+    (routeBody[current] as RouteBody)[key] = options;
     return;
   }
 
   routePath.shift();
-  return createCommonRoute(_this, routePath, routes[current] as RouteBody, key, options, parentRoute);
+  return createCommonRoute(_this, routePath, routeBody[current] as RouteBody, key, options, parentRoute);
 }
 
 function routerMapper({ _this, path, controller, route }: RouterMapperArgs) {
@@ -117,8 +116,8 @@ function addRouteMethod({ _this, path, route, methods }: Omit<MapperArgs, "contr
   };
 }
 
-function loadChildrenMapper({ _this, path, route, methods }: Omit<MapperArgs, "controller">) {
-  return (key: "loadChildren"): void => {
+function loadChildrenMapper({ _this, route }: Omit<MapperArgs, "controller">) {
+  return (): void => {
     if (route.path !== "") {
       const createPath = (paths: string[], routes: any): void => {
         if (paths.length === 0) return;
@@ -147,13 +146,17 @@ router.addRouteToList = function (route, _module) {
   const mapperArgs = { _this: this, path, route, methods };
 
   if (route.controller && route.hasOwnProperty("controller")) {
-    const dependencies = mapDependencies(this.dependencies, _module, route?.dependencies || (route.controller as any).dependencies);
+    const deps = Reflect.getMetadata(DEPS, route) || Reflect.getMetadata(DEPS, route.controller);
+    const dependencies = mapDependencies(this.dependencies, _module, deps);
     const controller = new route.controller(...dependencies);
-    const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
     const routes = controller["routes"];
 
-    routes.map(routerMapper({ ...mapperArgs, controller }));
-    controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
+    if (routes.length > 0) {
+      routes.map(routerMapper({ ...mapperArgs, controller }));
+    } else {
+      const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
+      controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
+    }
   }
 
   const routeKeys = Object.keys(route) as (RequestMethod | "loadChildren")[];
@@ -171,33 +174,47 @@ router.findRoute = function (path, method) {
 };
 
 router.executeRoute = async function (path, route) {
-  // Set message variable
-  let message = "";
+  const context = this.context;
 
-  try {
-    const context = this.context;
-    // Try to execute route callback
-    message = await route.callback(context);
+  // Try to execute route callback
+  const message = await route.callback(context);
 
-    if (!this.visitedRoutes[path]) {
-      // Initialize path for caching
-      this.visitedRoutes[path] = {} as any;
-    }
+  if (!this.visitedRoutes[path]) {
+    // Initialize path for caching
+    this.visitedRoutes[path] = {} as any;
+  }
 
-    if (!this.visitedRoutes[path][route.method]) {
-      // Cache path route if not on visited routes
-      this.visitedRoutes[path][route.method] = { ...route, ...context };
-    }
-  } catch (error) {
-    // Catch error when running callback
-    message = `${(error as Error)?.message || error}`;
+  if (!this.visitedRoutes[path][route.method]) {
+    // Remove req and res object from context
+    const { req, res, headers, setStatus, ...rest } = context;
+    // Cache path route if not on visited routes
+    this.visitedRoutes[path][route.method] = { ...route, ...rest };
   }
 
   return message;
 };
 
 router.visitedRoute = function (path, method) {
-  return this?.visitedRoutes && this?.visitedRoutes[path] && this?.visitedRoutes[path][method] ? this?.visitedRoutes[path][method] : null;
+  return this.visitedRoutes?.[path]?.[method] ?? null;
+};
+
+router.moduleMapper = function moduleMapper(parent: CustomModule) {
+  return (imported: ModuleWithProviders) => {
+    const moduleProvider = imported.module;
+    const { dependencies = [], providers = [], imports = [] } = imported;
+
+    if (parent) providers.forEach((provider) => parent.providers.push(provider));
+
+    const deps = Reflect.getMetadata(DEPS, moduleProvider) || dependencies;
+    const args: any[] = parent ? dependencyMapper(parent, deps) : deps;
+    const _module = new moduleProvider(...args);
+
+    if (parent) _module.parent = parent;
+    _module.providers = providers;
+    _module.imports = imports;
+    _module.invoke(parent);
+    _module.imports.forEach(moduleMapper(_module));
+  };
 };
 
 router.mapper = function (parent = "", _module = null) {
@@ -254,4 +271,4 @@ router.mapper = function (parent = "", _module = null) {
   };
 };
 
-export default (app: RouterProps): RouterFunction => merge(app, router);
+export default (properties: RouterProps): RouterFunction => merge(properties, router);

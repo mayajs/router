@@ -1,17 +1,6 @@
-import { CustomModule, Services } from "../class";
+import { CustomModule, Module, Services } from "../class";
 import http, { IncomingHttpHeaders } from "http";
-import {
-  Callback,
-  RequestMethod,
-  ModuleCustomType,
-  ModuleProviders,
-  ModuleImports,
-  Middlewares,
-  ControllerType,
-  RouteCallback,
-  RouterMapper,
-  RouterFunction,
-} from "../types";
+import { Callback, RequestMethod, Class, ClassList, Middlewares, RouteCallback, RouterMapper, RouterFunction } from "../types";
 
 export interface RouterFunctions {
   init: () => void;
@@ -81,6 +70,15 @@ export interface RouterFunctions {
    * @param routes A list of routes
    */
   add: (routes: Route[]) => void;
+
+  /**
+   * A function that bootstrap the application.
+   */
+  bootstrap: <T>(app: Type<T>) => void;
+
+  /**
+   * A list of headers that will be sent to the client.
+   */
   headers: { [x: string]: string };
 }
 
@@ -93,17 +91,19 @@ export interface RouterHelperMethod {
   executeRoute: (path: string, route: MayaJsRoute) => Promise<any>;
   visitedRoute: (path: string, method: RequestMethod) => VisitedRoutes | null;
   mapper: RouterMapper;
+  moduleMapper: (parent: CustomModule) => (imported: ModuleWithProviders) => void;
 }
 
 export interface RouterProps {
-  context: any;
+  root: Module;
+  context: RouterContext;
   routes: CommonRoutes;
   visitedRoutes: MayaJSRoutes<VisitedRoutes>;
   middlewares: Middlewares[];
   dependencies: RouterDependencies;
 }
 
-export interface RouterMethods extends RouterHelperMethod, RouterProps {}
+export interface RouterHelper extends RouterHelperMethod, RouterProps {}
 
 export interface MayaRouter extends RouterFunctions, RouterProps {
   router: RouterFunction;
@@ -151,18 +151,20 @@ export interface RouteMiddlewareDependencies {
 /**
  * Type for what object is instances of
  */
-export interface Type<T> extends Function {
+export type Type<T> = {
+  [K in keyof T]: T[K];
+} & {
   new (...args: any[]): T;
-}
+};
 
 export interface ModuleWithProviders extends ModuleWithProvidersProps {
-  module: ModuleCustomType;
+  module: typeof CustomModule;
 }
 
 export interface ModuleWithProvidersProps {
-  providers: ModuleProviders;
-  dependencies?: (Type<Services> | Function)[];
-  imports?: ModuleImports[];
+  providers: ClassList;
+  dependencies?: Type<any>[];
+  imports?: ModuleWithProviders[];
 }
 
 export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
@@ -173,7 +175,7 @@ export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodC
   /**
    * A class for define a route controller
    */
-  controller?: ControllerType;
+  controller?: Class;
   /**
    * A list of child routes that inherit the path of its parent
    */
@@ -185,7 +187,7 @@ export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodC
   /**
    * Lazy load a module
    */
-  loadChildren?: () => Promise<ModuleCustomType>;
+  loadChildren?: () => Promise<Class>;
 }
 
 export interface MayaJsRoute extends RouteMiddlewareDependencies {
@@ -209,7 +211,7 @@ export interface RouteBody {
   POST: MayaJsRoute;
   OPTIONS: MayaJsRoute;
   middlewares: Middlewares[];
-  [x: string]: RouteBody | MayaJsRoute | Middlewares[];
+  [x: string]: RouteBody | MayaJsRoute | Middlewares[] | {};
 }
 
 export interface CommonRoutes {
@@ -337,7 +339,7 @@ export interface ResponseObjectProps {
 }
 
 export interface RouterMapperArgs {
-  _this: RouterMethods;
+  _this: RouterHelper;
   path: string;
   controller: any;
   route: Route;

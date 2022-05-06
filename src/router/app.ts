@@ -1,27 +1,42 @@
-import { MayaJsContext, MayaRouter, RouterContext, RouterProps, VisitedRoutes } from "../interface";
-import { ResponseSender } from "../types";
+import { MayaJsRoute, MayaRouter, MethodRoute, Route, RouterContext, RouterProps, Type, VisitedRoutes } from "../interface";
+import { CONTROLLER_ROUTES, DEPS, MODULE, MODULE_BOOTSTRAP } from "../utils/constants";
+import { mapDependencies, pathUrl } from "../utils/helpers";
+import { RequestMethod, RouteCallback } from "../types";
+import { AppRoot, Module } from "../class";
 import middleware from "./middleware";
+import regex from "../utils/regex";
 import functions from "./router";
+import { websocket, wsDisconnect } from "./websocket";
 
 export const props: RouterProps = {
+  root: new AppRoot(),
   routes: { "": { middlewares: [] } as any },
   visitedRoutes: {},
   middlewares: [],
-  context: {},
+  context: {} as any,
   dependencies: {},
 };
 
 const app: MayaRouter = {
-  init: () => {
-    /* This is intentional */
-  },
-  use: (plugin) => app,
-  add: (routes) => {
-    /* This is intentional */
-  },
+  init: () => null,
+  use: (_plugin) => app,
+  add: (_routes) => null,
+  bootstrap: (_app) => null,
   headers: { "X-Powered-By": "MayaJS" },
   router: functions(props),
   ...props,
+};
+
+app.bootstrap = function (customModule) {
+  const _module = customModule as any;
+  const isModule = Reflect.getMetadata(MODULE, customModule) || _module[MODULE];
+  if (!isModule) throw new Error(`${customModule.name} is not a valid custom module.`);
+
+  const isBootstrap = Reflect.getMetadata(MODULE_BOOTSTRAP, customModule) || _module[MODULE_BOOTSTRAP];
+  if (!isBootstrap) throw new Error(`Failed to bootstrap ${customModule.name} module.`);
+
+  _module.imports.forEach(this.router.moduleMapper(_module));
+  app.router.root = _module;
 };
 
 app.add = function (routes) {
@@ -35,6 +50,10 @@ app.add = function (routes) {
 app.init = function () {
   // Initialize mayajs router
   this.router = functions({ ...app });
+
+  websocket();
+
+  process.on("SIGKILL", wsDisconnect).on("SIGINT", wsDisconnect).on("exit", wsDisconnect).on("disconnect", wsDisconnect);
 };
 
 app.use = function (plugin) {
@@ -44,43 +63,199 @@ app.use = function (plugin) {
   return this;
 };
 
-// Sends a response message and ending the request
-const send: ResponseSender = async (context: RouterContext) => {
+/**
+ * A function that will be called when a mapping all controller routes.
+ *
+ * @param _module - The current module.
+ * @param options - The options that will be used to build a controller route.
+ * @returns A params and controller route.
+ */
+function controllerRouteBuilder(
+  _module: Module,
+  options: { path: string; controller: Type<any>; method: RequestMethod }
+): { params: { [x: string]: string }; route?: MayaJsRoute } {
+  // Get controller dependencies from metadata or from option
+  const deps = Reflect.getMetadata(DEPS, options.controller) || options.controller.dependencies;
+
+  // Get routes from metadata or from option
+  const routes = Reflect.getMetadata(CONTROLLER_ROUTES, options.controller) as MethodRoute[];
+
+  // Map dependencies to the current module
+  const dependencies = mapDependencies(app.router.dependencies, _module, deps);
+
+  // Create a controller route
+  const controller = new options.controller(...dependencies);
+
+  // Define a params object
+  let params = {};
+
+  // Define a route object
+  let selectedRoute: MayaJsRoute | undefined;
+
+  // Check if the controller has routes
+  if (routes.length > 0) {
+    // Map routes and add each route to the routes list
+    const routesBody: MayaJsRoute[] = routes.map(({ methodName, path, middlewares, requestMethod }: MethodRoute): MayaJsRoute => {
+      // Create a callback that will be called when the route is found
+      const callback = (args: any) => controller[methodName as RequestMethod](args) as RouteCallback;
+
+      // Return a route object
+      return { middlewares, dependencies: [], method: requestMethod, regex: regex(path), callback, path };
+    });
+
+    // Map routes body
+    routesBody.some((route) => {
+      // Check if the route method is the same as the one defined in the options
+      const hasMatchingMethod = options.method.toLocaleLowerCase() === route.method.toLocaleLowerCase();
+
+      // Return false if the route method is not the same
+      if (!hasMatchingMethod) return false;
+
+      // Create route path
+      const routePath = pathUrl(route.path);
+
+      // Create path pattern using regex
+      const pathPattern = regex(routePath, true);
+
+      // Check if the path matches the one defined in the options
+      const matched = pathPattern.exec(options.path);
+
+      // Return false if the route path is not the same
+      if (!matched?.groups) return false;
+
+      // Set the params object
+      params = { ...matched?.groups };
+
+      // Set the selected route
+      selectedRoute = route;
+
+      // Return true if route is found and stop the loop
+      return true;
+    });
+
+    // Throw an error if the route is not found
+    if (!selectedRoute) throw new Error(`${options.method}: '${options.path}' was not found!`);
+
+    // Return the route object and params object
+    return { params, route: selectedRoute };
+  } else {
+    //  TODO : If no routes are found
+    // const controllerProps = Object.getOwnPropertyNames(Object.getPrototypeOf(controller)) as RequestMethod[];
+  }
+
+  // Return the route object and params object
+  return { params, route: selectedRoute };
+}
+
+/**
+ * A function that will be called when a mapping all routes.
+ *
+ * @param options - The options that will be used to map the routes.
+ * @param callback - The callback that will be called when a route is matched.
+ * @returns A function that will be called when a mapping all routes.
+ */
+function routesMapper(
+  options: { path: string; context: RouterContext; method: RequestMethod },
+  callback: (options: { params: { [x: string]: string }; route?: MayaJsRoute }) => boolean
+): (item: Route) => boolean | undefined {
+  // Extract method, path and context from the options
+  const { method, path, context } = options;
+
+  // Return a function that will be called when the route is found
+  return (item: Route) => {
+    // Create a route path
+    const routePath = pathUrl(item.path);
+
+    // Create a route regex pattern
+    const pathRegex = regex(routePath);
+
+    // Checked if the route path matches the current path
+    const matched = pathRegex.exec("/" + path);
+
+    // Check `path` if does not match and immediately exit
+    if (!matched) return false;
+
+    // Check `path` if matches and add params to the current context
+    if (matched.groups) context.params = { ...context.params, ...matched.groups };
+
+    // Check if the route is a controller route
+    if (item?.controller) {
+      // Create a build options for controller route builder
+      const buildOptions = { controller: item?.controller, path: ("/" + path).replace(pathRegex, ""), method };
+
+      // Build the controller route
+      const controllerRoute = controllerRouteBuilder(app.router.root, buildOptions);
+
+      // Return a callback with the controller route
+      return callback(controllerRoute);
+    }
+  };
+}
+
+/**
+ * A function that manage an incoming request.
+ *
+ * @param context - The current router context.
+ * @returns A promise that will be resolved when the router is ready.
+ */
+async function send(context: RouterContext): Promise<void> {
   // Get method, path and res in context object
   const { method, path, res } = context;
 
-  // Check if path exist in visited routes or in non-param routes
-  const route = app.router.visitedRoute(path, method) || app.router.findRoute(path, method);
-
-  if (!route) {
-    // Route was not found. Send back an error message
-    return res.send({ message: `${method}: '${path}' was not found!` }, 404);
-  }
-
+  // Create a list of routes that will be used to match the current path
   try {
+    // Check if path exist in visited routes
+    let selectedRoute: MayaJsRoute | null = app.router.visitedRoutes?.[path]?.[method] ?? null;
+
+    // Check if selected route is not null
+    if (selectedRoute) {
+      // If selected route is not null, set the selected route params to the context params
+      context.params = { ...context.params, ...(selectedRoute as VisitedRoutes).params };
+    } else {
+      // If selected route is null, map all routes
+      app.router.root.routes.some(
+        // Create a mapper function that will be called when mapping routes
+        routesMapper({ method, path, context }, (result) => {
+          // Check if a route was not found and return false
+          if (!result.route) return false;
+
+          // Set the selected route when route is found
+          selectedRoute = result.route;
+
+          // Add params to the current context
+          context.params = { ...context.params, ...result.params };
+
+          // Return true to stop the loop
+          return true;
+        })
+      );
+    }
+
+    // Set headers to the response
     Object.keys(app.headers).forEach((key) => res.setHeader(key, app.headers[key]));
 
-    // Create MayaJS params
-    const params = (route as VisitedRoutes).params || { ...route.regex.exec(path)?.groups };
+    // Create router context
+    app.router.context = { ...context };
 
-    // Create MayaJS context
-    app.router.context = { ...context, params };
+    // Set route middlewares
+    const middlewares = selectedRoute?.middlewares !== undefined ? selectedRoute.middlewares : [];
 
     // Create a factory method for executing current route
-    const execute = async (ctx: MayaJsContext) => {
+    const execute = async (ctx: RouterContext) => {
+      // Set the current router context
       app.router.context = ctx;
-      res.send(await app.router.executeRoute(path, route));
+
+      // Execute selected route
+      if (selectedRoute) res.send(await app.router.executeRoute(path, selectedRoute));
     };
 
-    const middlewares = route.middlewares !== undefined ? route.middlewares : [];
-
     // Run middlewares before calling the main route callback
-    middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
-  } catch (error) {
-    // Send error back to client
-    res.send(error);
+    return middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
+  } catch (error: any) {
+    // Send error to the client
+    res.send({ message: error?.message ?? error }, 500);
   }
-};
+}
 
 // Export app instance and send function
 export { app, send };
