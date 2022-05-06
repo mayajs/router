@@ -77,6 +77,7 @@ function routesMapper(
   options: { path: string; context: RouterContext; method: RequestMethod },
   callback: (options: { params: { [x: string]: string }; route?: MayaJsRoute }) => boolean
 ): (item: Route) => boolean | undefined {
+  const { method, path, context } = options;
 }
 
 /**
