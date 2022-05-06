@@ -222,7 +222,7 @@ export interface RouteBody {
   POST: MayaJsRoute;
   OPTIONS: MayaJsRoute;
   middlewares: Middlewares[];
-  [x: string]: RouteBody | MayaJsRoute | Middlewares[];
+  [x: string]: RouteBody | MayaJsRoute | Middlewares[] | {};
 }
 
 export interface CommonRoutes {
