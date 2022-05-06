@@ -48,9 +48,9 @@ const use = (plugin: Middlewares) => app.use(plugin);
 
 export class RouterModule extends CustomModule {
   invoke(parent: ParentModule) {
+    const isRoot = Reflect.getMetadata(ROOT, RouterModule.constructor) as boolean;
 
-  invoke() {
-    if (!RouterModule.isRoot) {
+    if (!isRoot) {
       throw new Error("RouterModule is not properly called using 'forRoot'.");
     }
     RouterModule.routes.forEach(app.router.mapper(this?.parent?.path || "", this as CustomModule));
