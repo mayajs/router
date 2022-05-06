@@ -43,3 +43,5 @@ export abstract class CustomModule extends MayaJsModule {
     return { module: class extends CustomModule {}, providers: [] };
   }
 }
+
+export class AppRoot extends Module {}
