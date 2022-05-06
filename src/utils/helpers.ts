@@ -125,3 +125,5 @@ export function routeFinderFactory(path: string) {
     return routeFinder(nextPath, route, method, middlewares);
   };
 }
+
+export const pathUrl = (url: string) => url.replace(/(^\/+)|(\/+$)/g, "");
