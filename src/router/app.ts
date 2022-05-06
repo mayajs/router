@@ -107,6 +107,7 @@ async function send(context: RouterContext): Promise<void> {
     let selectedRoute: MayaJsRoute | null = app.router.visitedRoutes?.[path]?.[method] ?? null;
 
     if (selectedRoute) {
+      context.params = { ...context.params, ...(selectedRoute as VisitedRoutes).params };
     }
 
   try {
