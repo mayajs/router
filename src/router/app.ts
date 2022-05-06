@@ -127,7 +127,7 @@ async function send(context: RouterContext): Promise<void> {
     const middlewares = selectedRoute?.middlewares !== undefined ? selectedRoute.middlewares : [];
 
     // Create a factory method for executing current route
-    const execute = async (ctx: MayaJsContext) => {
+    const execute = async (ctx: RouterContext) => {
       app.router.context = ctx;
       res.send(await app.router.executeRoute(path, route));
     };
