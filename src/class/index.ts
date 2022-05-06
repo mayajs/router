@@ -12,8 +12,7 @@ export abstract class Module {
   declarations: ControllerType[] = [];
   imports: ModuleWithProviders[] = [];
   exports: (ModuleCustomType | ControllerType)[] = [];
-  providers: ModuleProviders = [];
-  dependencies: any[] = [];
+  providers: ModuleProviders[] = [];
   parent: ParentModule = null;
   path = "";
 }
