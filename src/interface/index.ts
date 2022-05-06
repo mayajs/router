@@ -1,4 +1,4 @@
-import { CustomModule, Services } from "../class";
+import { CustomModule, Module, Services } from "../class";
 import http, { IncomingHttpHeaders } from "http";
 import {
   Callback,
