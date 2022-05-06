@@ -32,6 +32,7 @@ app.bootstrap = function (customModule) {
   if (!isBootstrap) throw new Error(`Failed to bootstrap ${customModule.name} module.`);
 
   _module.imports.forEach(this.router.moduleMapper(_module));
+  app.router.root = _module;
 };
 
 app.add = function (routes) {
