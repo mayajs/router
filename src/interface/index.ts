@@ -81,6 +81,10 @@ export interface RouterFunctions {
    * @param routes A list of routes
    */
   add: (routes: Route[]) => void;
+
+  /**
+   * A list of headers that will be sent to the client.
+   */
   headers: { [x: string]: string };
 }
 
