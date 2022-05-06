@@ -195,8 +195,10 @@ router.executeRoute = async function (path, route) {
       this.visitedRoutes[path] = {} as any;
     }
 
-    if (!this.visitedRoutes[path][route.method]) {
-      // Cache path route if not on visited routes
+  if (!this.visitedRoutes[path][route.method]) {
+    // Remove req and res object from context
+    const { req, res, headers, setStatus, ...rest } = context;
+    // Cache path route if not on visited routes
     this.visitedRoutes[path][route.method] = { ...route, ...rest };
   }
 
