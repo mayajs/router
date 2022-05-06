@@ -1,5 +1,5 @@
 import { MayaJsContext, MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
-import { ControllerMiddleware, Class, ParentModule } from "../types";
+import { ControllerMiddleware, Class, ClassList, ParentModule } from "../types";
 
 export abstract class Services {
   root: boolean = false;
@@ -9,11 +9,11 @@ export abstract class Services {
 
 export abstract class Module {
   module: Class = class extends Module {};
-  declarations: Class[] = [];
+  declarations: ClassList = [];
   imports: ModuleWithProviders[] = [];
-  exports: Class[] = [];
-  providers: Class[] = [];
-  dependencies: Class[] = [];
+  exports: ClassList = [];
+  providers: ClassList = [];
+  dependencies: ClassList = [];
   routes: Route[] = [];
   parent: ParentModule = null;
   path = "";
