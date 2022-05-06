@@ -1,17 +1,6 @@
 import { CustomModule, Module, Services } from "../class";
 import http, { IncomingHttpHeaders } from "http";
-import {
-  Callback,
-  RequestMethod,
-  ModuleCustomType,
-  ModuleProviders,
-  ModuleImports,
-  Middlewares,
-  ControllerType,
-  RouteCallback,
-  RouterMapper,
-  RouterFunction,
-} from "../types";
+import { Callback, RequestMethod, ModuleCustomType, ModuleProviders, Middlewares, RouteCallback, RouterMapper, RouterFunction, Class } from "../types";
 
 export interface RouterFunctions {
   init: () => void;
