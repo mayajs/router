@@ -31,9 +31,7 @@ export class Controller {
   DELETE = (_ctx: MayaJsContext): Promise<any> | any => null;
   PUT = (_ctx: MayaJsContext): Promise<any> | any => null;
   PATCH = (_ctx: MayaJsContext): Promise<any> | any => null;
-  OPTIONS(_ctx: MayaJsContext): Promise<any> | any {
-    return;
-  }
+  OPTIONS = (_ctx: MayaJsContext): Promise<any> | any => null;
   HEAD(_ctx: MayaJsContext): Promise<any> | any {
     return;
   }
