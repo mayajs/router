@@ -65,6 +65,12 @@ function controllerRouteBuilder(
 ): { params: { [x: string]: string }; route?: MayaJsRoute } {
 }
 
+/**
+ * A function that manage an incoming request.
+ *
+ * @param context - The current router context.
+ * @returns A promise that will be resolved when the router is ready.
+ */
 async function send(context: RouterContext): Promise<void> {
   // Get method, path and res in context object
   const { method, path, res } = context;
