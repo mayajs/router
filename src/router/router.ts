@@ -42,17 +42,17 @@ function createCommonRoute(
     return;
   }
   if (current === "" && routePath.length === 1) {
-    routes[key] = options;
+    routeBody[key] = options;
     return;
   }
-  if (!routes?.[current]) routes[current] = { middlewares: [...(parentRoute.middlewares ?? []), ...(parentRoute.guards ?? [])] } as any;
-  if (routes[current] && routePath.length === 1) {
-    (routes[current] as RouteBody)[key] = options;
+  if (!routeBody?.[current]) routeBody[current] = { middlewares: [...(parentRoute.middlewares ?? []), ...(parentRoute.guards ?? [])] } as any;
+  if (routeBody[current] && routePath.length === 1) {
+    (routeBody[current] as RouteBody)[key] = options;
     return;
   }
 
   routePath.shift();
-  return createCommonRoute(_this, routePath, routes[current] as RouteBody, key, options, parentRoute);
+  return createCommonRoute(_this, routePath, routeBody[current] as RouteBody, key, options, parentRoute);
 }
 
 function routerMapper({ _this, path, controller, route }: RouterMapperArgs) {
