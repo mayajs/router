@@ -186,7 +186,7 @@ export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodC
   /**
    * A class for define a route controller
    */
-  controller?: ControllerType;
+  controller?: Class;
   /**
    * A list of child routes that inherit the path of its parent
    */
