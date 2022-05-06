@@ -24,9 +24,7 @@ export abstract class Module {
  */
 export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
-  routes: any[] = [];
-  GET(ctx: MayaJsContext): Promise<any> | any {
-    /* This is intentional */
+  routes: MethodRoute[] = [];
   }
   POST(ctx: MayaJsContext): Promise<any> | any {
     /* This is intentional */
