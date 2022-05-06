@@ -112,6 +112,7 @@ async function send(context: RouterContext): Promise<void> {
       app.router.root.routes.some(
         routesMapper({ method, path, context }, (result) => {
           if (!result.route) return false;
+          selectedRoute = result.route;
         })
       );
     }
