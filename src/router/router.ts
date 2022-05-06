@@ -190,10 +190,10 @@ router.executeRoute = async function (path, route) {
   // Try to execute route callback
   const message = await route.callback(context);
 
-    if (!this.visitedRoutes[path]) {
-      // Initialize path for caching
-      this.visitedRoutes[path] = {} as any;
-    }
+  if (!this.visitedRoutes[path]) {
+    // Initialize path for caching
+    this.visitedRoutes[path] = {} as any;
+  }
 
   if (!this.visitedRoutes[path][route.method]) {
     // Remove req and res object from context
