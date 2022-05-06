@@ -91,6 +91,7 @@ function controllerRouteBuilder(
       const pathPattern = regex(routePath, true);
       const matched = pathPattern.exec(options.path);
       if (!matched?.groups) return false;
+      params = { ...matched?.groups };
     });
   }
 
