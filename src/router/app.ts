@@ -65,6 +65,14 @@ function controllerRouteBuilder(
 ): { params: { [x: string]: string }; route?: MayaJsRoute } {
 }
 
+
+/**
+ * A function that will be called when a mapping all routes.
+ *
+ * @param options - The options that will be used to map the routes.
+ * @param callback - The callback that will be called when a route is matched.
+ * @returns A function that will be called when a mapping all routes.
+ */
 function routesMapper(
   options: { path: string; context: RouterContext; method: RequestMethod },
   callback: (options: { params: { [x: string]: string }; route?: MayaJsRoute }) => boolean
