@@ -175,6 +175,7 @@ export interface ModuleWithProviders extends ModuleWithProvidersProps {
 export interface ModuleWithProvidersProps {
   providers: ModuleProviders[];
   dependencies?: Type<any>[];
+  imports?: ModuleWithProviders[];
 }
 
 export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
