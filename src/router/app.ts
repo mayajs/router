@@ -4,6 +4,7 @@ import { mapDependencies, pathUrl } from "../utils/helpers";
 import { RequestMethod, RouteCallback } from "../types";
 import { AppRoot, Module } from "../class";
 import middleware from "./middleware";
+import regex from "../utils/regex";
 import functions from "./router";
 import { websocket, wsDisconnect } from "./websocket";
 
