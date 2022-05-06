@@ -102,6 +102,7 @@ async function send(context: RouterContext): Promise<void> {
   // Get method, path and res in context object
   const { method, path, res } = context;
 
+  try {
   // Check if path exist in visited routes or in non-param routes
   const route = app.router.visitedRoute(path, method) || app.router.findRoute(path, method);
 
@@ -128,10 +129,8 @@ async function send(context: RouterContext): Promise<void> {
     const middlewares = route.middlewares !== undefined ? route.middlewares : [];
 
     // Run middlewares before calling the main route callback
-    middleware([...app.router.middlewares, ...middlewares], app.router.context, execute);
-  } catch (error) {
-    // Send error back to client
-    res.send(error);
+  } catch (error: any) {
+    res.send({ message: error?.message ?? error }, 500);
   }
 }
 
