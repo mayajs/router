@@ -14,13 +14,7 @@ export const props: RouterProps = {
 };
 
 const app: MayaRouter = {
-  init: () => {
-    /* This is intentional */
-  },
-  use: (plugin) => app,
-  add: (routes) => {
-    /* This is intentional */
-  },
+  init: () => null,
   headers: { "X-Powered-By": "MayaJS" },
   router: functions(props),
   ...props,
