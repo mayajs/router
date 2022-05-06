@@ -80,6 +80,7 @@ function routesMapper(
   const { method, path, context } = options;
   return (item: Route) => {
     const routePath = pathUrl(item.path);
+    const pathRegex = regex(routePath);
   };
 }
 
