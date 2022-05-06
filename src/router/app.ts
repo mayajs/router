@@ -76,6 +76,7 @@ function controllerRouteBuilder(
 ): { params: { [x: string]: string }; route?: MayaJsRoute } {
   const deps = Reflect.getMetadata(DEPS, options.controller) || options.controller.dependencies;
   const routes = Reflect.getMetadata(CONTROLLER_ROUTES, options.controller) as MethodRoute[];
+  const dependencies = mapDependencies(app.router.dependencies, _module, deps);
 }
 
 
