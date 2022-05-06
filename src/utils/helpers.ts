@@ -16,16 +16,6 @@ export const sanitizePath = (path: string) => {
   return "/" + path;
 };
 
-export const getFunctionProps = <T>(func: Function | Object): T => {
-  const _this: any = {};
-
-  for (const prop in func) {
-    _this[prop] = (func as any)[prop];
-  }
-
-  return _this;
-};
-
 export const logger = {
   red: (value: string) => console.log(`\x1b[31m${value}\x1b[0m`),
 };
