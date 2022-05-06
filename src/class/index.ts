@@ -26,9 +26,7 @@ export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: MethodRoute[] = [];
   dependencies: (Type<Services> | Class)[] = [];
-  GET(_ctx: MayaJsContext): Promise<any> | any {
-    return;
-  }
+  GET = (_ctx: MayaJsContext): Promise<any> | any => null;
   POST(_ctx: MayaJsContext): Promise<any> | any {
     return;
   }
