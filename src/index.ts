@@ -71,6 +71,8 @@ export class RouterModule extends CustomModule {
 
         dependencies.some(findDeps);
       }
+
+      parent?.routes.push(route);
     });
   }
 
