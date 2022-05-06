@@ -39,6 +39,11 @@ export abstract class CustomModule extends Module {
   constructor(..._args: any) {
     super();
   }
+
+  invoke(_parent: ParentModule): void {
+    return;
+  }
+
   static forRoot(..._args: any): ModuleWithProviders {
     return { module: CustomModule, providers: [] };
   }
