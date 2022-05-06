@@ -9,13 +9,13 @@ import { declarationsMapper, mapModules } from "../utils/mapper";
 // Export default route object
 const router: RouterMethods = {
   addRouteToList: (route, _module) => {
-    /* This is intentional */
+    return;
   },
   findRoute: (path, method) => null,
   executeRoute: (path, route) => Promise.resolve(),
   visitedRoute: (path, method) => null,
   mapper: (path, method) => (route) => {
-    /* This is intentional */
+    return;
   },
   ...props,
 };
