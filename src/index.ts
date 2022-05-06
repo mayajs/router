@@ -61,6 +61,9 @@ export class RouterModule extends CustomModule {
       if (!isDeclared) throw new Error(`${route.controller?.name} is not declared in the module.`);
 
       const dependencies = (route.controller as Type<Controller>).dependencies || [];
+
+      if (route.controller && dependencies.length > 0) {
+      }
     });
   }
 
