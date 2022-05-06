@@ -27,18 +27,25 @@ export class Controller {
   routes: MethodRoute[] = [];
   dependencies: (Type<Services> | Class)[] = [];
   GET(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   POST(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   DELETE(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   PUT(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   PATCH(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   OPTIONS(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
   HEAD(_ctx: MayaJsContext): Promise<any> | any {
+    return;
   }
 }
 
