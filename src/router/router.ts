@@ -161,8 +161,11 @@ router.addRouteToList = function (route, _module) {
     const controller = new route.controller(...dependencies);
     const routes = controller["routes"];
 
-    routes.map(routerMapper({ ...mapperArgs, controller }));
-    controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
+    if (routes.length > 0) {
+      routes.map(routerMapper({ ...mapperArgs, controller }));
+    } else {
+      controllerProps.forEach(propsControllerMapper({ ...mapperArgs, controller }));
+    }
   }
 
   const routeKeys = Object.keys(route) as (RequestMethod | "loadChildren")[];
