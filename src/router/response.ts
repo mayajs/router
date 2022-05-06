@@ -19,19 +19,18 @@ function response(res: http.ServerResponse): MayaJsResponse {
       const isError = value instanceof Error;
       const code = isError ? 500 : statusCode;
       const htmlPattern = /<([^>]+?)([^>]*?)>(.*?)<\/\1>/gi;
-      let response = value;
 
       try {
-        if (!isText) response = this.json(value?.message && isError ? { message: value?.message } : value, code);
-        else if (htmlPattern.test(value)) response = this.html(value, code);
+        if (!isText) value = this.json(value?.message && isError ? { message: value?.message } : value, code);
+        else if (htmlPattern.test(value)) value = this.html(value, code);
         else res.writeHead(code, contentType[0]);
       } catch (error) {
         const message = `${error}`.replace(/file:\/\/\/[A-Z]:.+\/(?=src)|^\s*at.*\)\n?|\(.+\n?/gm, "");
-        response = JSON.stringify({ status: "error", message });
+        value = JSON.stringify({ status: "error", message });
         if (isText) res.writeHead(500, contentType[0]);
       }
 
-      endResponse(response);
+      endResponse(value);
     },
     json(json: object, statusCode = 200) {
       res.writeHead(statusCode, contentType[1]);
