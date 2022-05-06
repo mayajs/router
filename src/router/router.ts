@@ -17,6 +17,9 @@ const router: RouterMethods = {
   mapper: (path, method) => (route) => {
     return;
   },
+  moduleMapper: (parent) => (imported) => {
+    return;
+  },
   ...props,
 };
 
