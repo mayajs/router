@@ -1,5 +1,6 @@
 import { MayaJsContext, MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
 import { ControllerMiddleware, Class, ClassList, ParentModule } from "../types";
+import { CONTROLLER_METHODS } from "../utils/constants";
 
 export abstract class Services {
   root: boolean = false;
@@ -26,13 +27,7 @@ export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: MethodRoute[] = [];
   dependencies: (Type<Services> | Class)[] = [];
-  GET = (_ctx: MayaJsContext): Promise<any> | any => null;
-  POST = (_ctx: MayaJsContext): Promise<any> | any => null;
-  DELETE = (_ctx: MayaJsContext): Promise<any> | any => null;
-  PUT = (_ctx: MayaJsContext): Promise<any> | any => null;
-  PATCH = (_ctx: MayaJsContext): Promise<any> | any => null;
-  OPTIONS = (_ctx: MayaJsContext): Promise<any> | any => null;
-  HEAD = (_ctx: MayaJsContext): Promise<any> | any => null;
+  GET = CONTROLLER_METHODS;
 }
 
 export class CustomModule extends Module {
