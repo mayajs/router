@@ -5,6 +5,7 @@ import merge from "../utils/merge";
 import regex from "../utils/regex";
 import { props } from "./app";
 import { declarationsMapper, mapModules } from "../utils/mapper";
+import { CustomModule } from "../class";
 
 // Export default route object
 const router: RouterMethods = {
