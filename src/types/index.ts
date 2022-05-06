@@ -10,7 +10,7 @@ import {
   ModuleWithProviders,
   RouterContext,
   RouterDependencies,
-  RouterMethods,
+  RouterHelper,
   RouterProps,
   Type,
 } from "../interface";
@@ -68,7 +68,7 @@ export type ControllerMiddleware = {
 
 export type ResponseSender = (context: RouterContext) => Promise<void>;
 
-export type RouterFunction = RouterProps & RouterMethods;
+export type RouterFunction = RouterProps & RouterHelper;
 
 export type RouterMapper = (parent?: string, _module?: CustomModule | null) => (route: Route) => void;
 

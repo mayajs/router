@@ -1,4 +1,4 @@
-import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs, ModuleWithProviders } from "../interface";
+import { RouteMethod, RouterHelper, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs, ModuleWithProviders } from "../interface";
 import { routeFinderFactory, logger, mapDependencies, sanitizePath, dependencyMapper } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
@@ -9,7 +9,7 @@ import { CustomModule } from "../class";
 import { DEPS } from "../utils/constants";
 
 // Export default route object
-const router: RouterMethods = {
+const router: RouterHelper = {
   addRouteToList: (_path, _method) => null,
   findRoute: (_path, _method) => null,
   executeRoute: (_path, _route) => Promise.resolve(),
@@ -23,14 +23,7 @@ interface MapperArgs extends RouterMapperArgs {
   methods: string[];
 }
 
-function createCommonRoute(
-  _this: RouterMethods,
-  routePath: string[],
-  routeBody: RouteBody,
-  key: RequestMethod,
-  options: MayaJsRoute,
-  parentRoute: Route
-): void {
+function createCommonRoute(_this: RouterHelper, routePath: string[], routeBody: RouteBody, key: RequestMethod, options: MayaJsRoute, parentRoute: Route): void {
   const current = routePath[0];
 
   if ((parentRoute?.path === "" || !parentRoute?.path) && current === "") {

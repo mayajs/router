@@ -103,7 +103,7 @@ export interface RouterProps {
   dependencies: RouterDependencies;
 }
 
-export interface RouterMethods extends RouterHelperMethod, RouterProps {}
+export interface RouterHelper extends RouterHelperMethod, RouterProps {}
 
 export interface MayaRouter extends RouterFunctions, RouterProps {
   router: RouterFunction;
@@ -339,7 +339,7 @@ export interface ResponseObjectProps {
 }
 
 export interface RouterMapperArgs {
-  _this: RouterMethods;
+  _this: RouterHelper;
   path: string;
   controller: any;
   route: Route;
