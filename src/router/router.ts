@@ -209,6 +209,25 @@ router.visitedRoute = function (path, method) {
   return this.visitedRoutes?.[path]?.[method] ?? null;
 };
 
+router.moduleMapper = function moduleMapper(parent: CustomModule) {
+  return (imported: ModuleWithProviders) => {
+    const moduleProvider = imported.module;
+    const { dependencies = [], providers = [], imports = [] } = imported;
+
+    if (parent) providers.forEach((provider) => parent.providers.push(provider));
+
+    const deps = Reflect.getMetadata(DEPS, moduleProvider) || dependencies;
+    const args: any[] = parent ? dependencyMapper(parent, deps) : deps;
+    const _module = new moduleProvider(...args);
+
+    if (parent) _module.parent = parent;
+    _module.providers = providers;
+    _module.imports = imports;
+    _module.invoke(parent);
+    _module.imports.forEach(moduleMapper(_module));
+  };
+};
+
 router.mapper = function (parent = "", _module = null) {
   return (route) => {
     // Create an object from route
