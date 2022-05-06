@@ -85,6 +85,7 @@ function controllerRouteBuilder(
       const callback = (args: any) => controller[methodName as RequestMethod](args) as RouteCallback;
       return { middlewares, dependencies: [], method: requestMethod, regex: regex(path), callback, path };
     });
+    routesBody.some((route) => { });
   }
 
 }
