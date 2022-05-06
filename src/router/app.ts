@@ -129,7 +129,7 @@ async function send(context: RouterContext): Promise<void> {
     // Create a factory method for executing current route
     const execute = async (ctx: RouterContext) => {
       app.router.context = ctx;
-      res.send(await app.router.executeRoute(path, route));
+      if (selectedRoute) res.send(await app.router.executeRoute(path, selectedRoute));
     };
 
     // Run middlewares before calling the main route callback
