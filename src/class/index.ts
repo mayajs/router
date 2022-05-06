@@ -25,6 +25,7 @@ export abstract class Module {
 export class Controller {
   middlewares: Partial<ControllerMiddleware> = {};
   routes: MethodRoute[] = [];
+  dependencies: (Type<Services> | Class)[] = [];
   }
   POST(ctx: MayaJsContext): Promise<any> | any {
     /* This is intentional */
