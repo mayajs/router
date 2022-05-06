@@ -39,8 +39,8 @@ export abstract class CustomModule extends MayaJsModule {
   invoke() {
     /* This is intentional */
   }
-  static forRoot(...args: any): ModuleWithProviders {
-    return { module: class extends CustomModule {}, providers: [] };
+  static forRoot(..._args: any): ModuleWithProviders {
+    return { module: CustomModule, providers: [] };
   }
 }
 
