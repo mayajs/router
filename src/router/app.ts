@@ -24,6 +24,8 @@ const app: MayaRouter = {
 };
 
 app.bootstrap = function (customModule) {
+  const _module = customModule as any;
+  const isModule = Reflect.getMetadata(MODULE, customModule) || _module[MODULE];
 };
 
 app.add = function (routes) {
