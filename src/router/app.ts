@@ -108,6 +108,8 @@ async function send(context: RouterContext): Promise<void> {
 
     if (selectedRoute) {
       context.params = { ...context.params, ...(selectedRoute as VisitedRoutes).params };
+    } else {
+      app.router.root.routes.some(() => {});
     }
 
   try {
