@@ -38,6 +38,25 @@ const dependencyFinder = (name: string, _module: ParentModule) => {
 
   return new provider(...args) as Services;
 };
+
+export function dependencyMapper(_module: ParentModule, dependencies: any[]) {
+  const _dependencies = dependencies ?? _module?.dependencies;
+
+  const mapDependencyItems = ({ name }: any) => {
+    if (PRIMITIVES.includes(name)) return undefined;
+
+    const dependency = dependencyFinder(name, _module);
+
+    if (!dependency) {
+      logger.red(`${name} is not provided properly in a module.`);
+      throw new Error();
+    }
+    return dependency;
+  };
+
+  return _dependencies ? _dependencies.map(mapDependencyItems) : [];
+}
+
 const findDependency = (name: string, dependencies: RouterDependencies, _module?: ParentModule) => {
   if (dependencies[name]) return dependencies[name];
 
