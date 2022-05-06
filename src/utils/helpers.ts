@@ -26,7 +26,7 @@ const mapProviders = (name: string, _module?: ParentModule): undefined | ModuleP
   return index > -1 ? _module?.providers[index] : mapProviders(name, _module.parent);
 };
 
-const findDependency = (name: string, dependencies: RouterDependencies, props: RouterProps, _module?: ParentModule) => {
+const findDependency = (name: string, dependencies: RouterDependencies, _module?: ParentModule) => {
   if (dependencies[name]) return dependencies[name];
 
   const provider = mapProviders(name, _module) as any;
@@ -46,7 +46,7 @@ export function mapDependencies(routerDep: RouterDependencies, _module?: ParentM
   const mapDependencyItems = ({ name }: any) => {
     if (PRIMITIVES.includes(name)) return undefined;
 
-    const dependency = findDependency(name, routerDep, props, _module);
+    const dependency = findDependency(name, routerDep, _module);
 
     if (!dependency) {
       logger.red(`${name} is not provided properly in a module.`);
