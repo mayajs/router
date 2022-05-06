@@ -57,6 +57,9 @@ export class RouterModule extends CustomModule {
     const routes = Reflect.getMetadata(MODULE_ROUTES, RouterModule.constructor) as Route[];
     routes.forEach((route) => {
       const isDeclared = parent?.declarations.some((declaration) => declaration.name === route.controller?.name);
+
+      if (!isDeclared) throw new Error(`${route.controller?.name} is not declared in the module.`);
+
     });
   }
 
