@@ -17,6 +17,7 @@ const app: MayaRouter = {
   init: () => null,
   use: (_plugin) => app,
   add: (_routes) => null,
+  bootstrap: (_app) => null,
   headers: { "X-Powered-By": "MayaJS" },
   router: functions(props),
   ...props,
