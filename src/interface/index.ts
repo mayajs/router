@@ -83,6 +83,11 @@ export interface RouterFunctions {
   add: (routes: Route[]) => void;
 
   /**
+   * A function that bootstrap the application.
+   */
+  bootstrap: <T>(app: Type<T>) => void;
+
+  /**
    * A list of headers that will be sent to the client.
    */
   headers: { [x: string]: string };
