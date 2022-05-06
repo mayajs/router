@@ -173,9 +173,7 @@ export interface ModuleWithProviders extends ModuleWithProvidersProps {
 }
 
 export interface ModuleWithProvidersProps {
-  providers: ModuleProviders;
-  dependencies?: (Type<Services> | Function)[];
-  imports?: ModuleImports[];
+  providers: ModuleProviders[];
 }
 
 export interface Route extends RouteMiddlewareDependencies, Partial<RouteMethodCallbacks> {
