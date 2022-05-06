@@ -6,7 +6,7 @@ import http from "http";
 const contentTypeValues = ["text/plain", "application/json", "text/html"];
 const contentType = contentTypeValues.map((type) => ({ "Content-Type": type }));
 
-function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
+function response(res: http.ServerResponse): MayaJsResponse {
   const endResponse = (value: any) => {
     if (value) res.write(`${value}`);
     res.end();
@@ -51,4 +51,4 @@ function ResponseFunctions(res: http.ServerResponse): MayaJsResponse {
   });
 }
 
-export default ResponseFunctions;
+export default response;
