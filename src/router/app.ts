@@ -23,6 +23,9 @@ const app: MayaRouter = {
   ...props,
 };
 
+app.bootstrap = function (customModule) {
+};
+
 app.add = function (routes) {
   // Check if routes is an array
   if (!Array.isArray(routes)) return this.router.addRouteToList(routes);
