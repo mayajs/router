@@ -93,6 +93,7 @@ function controllerRouteBuilder(
       if (!matched?.groups) return false;
       params = { ...matched?.groups };
       selectedRoute = route;
+      return true;
     });
   }
 
