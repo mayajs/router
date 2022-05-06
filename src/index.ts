@@ -55,6 +55,8 @@ export class RouterModule extends CustomModule {
     }
 
     const routes = Reflect.getMetadata(MODULE_ROUTES, RouterModule.constructor) as Route[];
+    routes.forEach((route) => {
+    });
   }
 
   static forRoot(routes: Route[]): ModuleWithProviders {
