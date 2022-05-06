@@ -162,9 +162,11 @@ export interface RouteMiddlewareDependencies {
 /**
  * Type for what object is instances of
  */
-export interface Type<T> extends Function {
+export type Type<T> = {
+  [K in keyof T]: T[K];
+} & {
   new (...args: any[]): T;
-}
+};
 
 export interface ModuleWithProviders extends ModuleWithProvidersProps {
   module: ModuleCustomType;
