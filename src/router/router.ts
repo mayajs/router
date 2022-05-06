@@ -1,4 +1,4 @@
-import { RouteMethod, MayaJsRoute, RouteBody, Route, RouterMethods, RouterProps, RouterMapperArgs, ModuleWithProviders } from "../interface";
+import { RouteMethod, RouterMethods, RouterProps, MayaJsRoute, RouteBody, Route, RouterMapperArgs, ModuleWithProviders } from "../interface";
 import { routeFinderFactory, logger, mapDependencies, sanitizePath, dependencyMapper } from "../utils/helpers";
 import { RequestMethod, RouteCallback, RouterFunction } from "../types";
 import merge from "../utils/merge";
