@@ -63,6 +63,11 @@ export class RouterModule extends CustomModule {
       const dependencies = (route.controller as Type<Controller>).dependencies || [];
 
       if (route.controller && dependencies.length > 0) {
+        const findDeps = (dependency: any) => {
+          const hasFound = parent?.providers.some((provider) => provider?.name === dependency.name);
+          if (!hasFound) throw new Error(`${dependency?.name} is not declared in the module.`);
+          return dependency?.dependencies?.some(findDeps) ?? true;
+        };
       }
     });
   }
