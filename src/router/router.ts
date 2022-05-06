@@ -6,6 +6,7 @@ import regex from "../utils/regex";
 import { props } from "./app";
 import { declarationsMapper, mapModules } from "../utils/mapper";
 import { CustomModule } from "../class";
+import { DEPS } from "../utils/constants";
 
 // Export default route object
 const router: RouterMethods = {
