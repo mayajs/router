@@ -132,8 +132,6 @@ async function send(context: RouterContext): Promise<void> {
       res.send(await app.router.executeRoute(path, route));
     };
 
-    const middlewares = route.middlewares !== undefined ? route.middlewares : [];
-
     // Run middlewares before calling the main route callback
   } catch (error: any) {
     res.send({ message: error?.message ?? error }, 500);
