@@ -30,6 +30,7 @@ export class Controller {
   GET = CONTROLLER_METHODS;
   POST = CONTROLLER_METHODS;
   PUT = CONTROLLER_METHODS;
+  DELETE = CONTROLLER_METHODS;
 }
 
 export class CustomModule extends Module {
