@@ -106,10 +106,8 @@ async function send(context: RouterContext): Promise<void> {
   // Check if path exist in visited routes or in non-param routes
     let selectedRoute: MayaJsRoute | null = app.router.visitedRoutes?.[path]?.[method] ?? null;
 
-  if (!route) {
-    // Route was not found. Send back an error message
-    return res.send({ message: `${method}: '${path}' was not found!` }, 404);
-  }
+    if (selectedRoute) {
+    }
 
   try {
     Object.keys(app.headers).forEach((key) => res.setHeader(key, app.headers[key]));
