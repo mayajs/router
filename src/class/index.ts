@@ -32,6 +32,7 @@ export class Controller {
   PUT = CONTROLLER_METHODS;
   PATCH = CONTROLLER_METHODS;
   DELETE = CONTROLLER_METHODS;
+  OPTIONS = CONTROLLER_METHODS;
 }
 
 export class CustomModule extends Module {
