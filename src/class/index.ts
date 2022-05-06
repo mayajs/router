@@ -1,4 +1,4 @@
-import { MayaJsContext, MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
+import { MethodRoute, ModuleWithProviders, Route, Type } from "../interface";
 import { ControllerMiddleware, Class, ClassList, ParentModule } from "../types";
 import { CONTROLLER_METHODS } from "../utils/constants";
 
