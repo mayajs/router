@@ -9,4 +9,5 @@ const extPattern = /\.(?<ext>\w*?)$/g;
 
 export const isFileRequest = (url: string): boolean => {
   const ext = url.match(extPattern) ?? [];
+  return ext?.length > 0;
 };
