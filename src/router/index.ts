@@ -6,7 +6,7 @@ import { URL } from "url";
 import { RequestMethod } from "../types";
 import { pathUrl, statusCodeFactory } from "../utils/helpers";
 
-async function handler(req: MayaJsRequest, res: MayaJsResponse) {
+function handler(req: MayaJsRequest, res: MayaJsResponse) {
   const protocol = req.headers.referer ? req.headers.referer.split(":")[0] : "http";
   const fullUrl = protocol + "://" + req.headers.host;
   const parsedURL = new URL(req.url || "", fullUrl);
