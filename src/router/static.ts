@@ -11,3 +11,6 @@ export const isFileRequest = (url: string): boolean => {
   const ext = url.match(extPattern) ?? [];
   return ext?.length > 0;
 };
+
+export default async (context: RouterContext): Promise<void> => {
+};
