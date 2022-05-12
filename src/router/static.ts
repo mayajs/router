@@ -4,3 +4,5 @@ import { promises as fs } from "fs";
 import path from "path";
 
 const resolveDir = (filepath: string) => path.resolve(process.cwd(), "./public" + filepath);
+
+const extPattern = /\.(?<ext>\w*?)$/g;
