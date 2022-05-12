@@ -14,4 +14,5 @@ export const isFileRequest = (url: string): boolean => {
 
 export default async (context: RouterContext): Promise<void> => {
   const { res, req } = context;
+  const filePath = req.url === "/" ? resolveDir("/index.html") : resolveDir(req.url ?? "");
 };
