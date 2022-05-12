@@ -17,4 +17,6 @@ export default async (context: RouterContext): Promise<void> => {
   const filePath = req.url === "/" ? resolveDir("/index.html") : resolveDir(req.url ?? "");
   const extension = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[extension] || "application/octet-stream";
+
+  if (!contentType) return res.send({ message: "File format not supported!" }, 404);
 };
