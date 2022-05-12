@@ -22,6 +22,7 @@ export default async (context: RouterContext): Promise<void> => {
 
   try {
     const data = await fs.readFile(filePath);
+    res.writeHead(200, { "Content-Type": contentType });
   } catch (error) {
     return res.send({ message: "File not found!" }, 404);
   }
