@@ -19,8 +19,10 @@ export default async (context: RouterContext): Promise<void> => {
   const contentType = MIME_TYPES[extension] || "application/octet-stream";
 
   if (!contentType) return res.send({ message: "File format not supported!" }, 404);
+
   try {
     const data = await fs.readFile(filePath);
   } catch (error) {
+    return res.send({ message: "File not found!" }, 404);
   }
 };
