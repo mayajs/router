@@ -7,6 +7,7 @@ import middleware from "./middleware";
 import regex from "../utils/regex";
 import functions from "./router";
 import { websocket, wsDisconnect } from "./websocket";
+import sendFile, { isFileRequest } from "./static";
 
 export const props: RouterProps = {
   root: new AppRoot(),
