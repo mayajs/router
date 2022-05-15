@@ -7,6 +7,7 @@ import middleware from "./middleware";
 import regex from "../utils/regex";
 import functions from "./router";
 import { websocket, wsDisconnect } from "./websocket";
+import sendFile, { isFileRequest } from "./static";
 
 export const props: RouterProps = {
   root: new AppRoot(),
@@ -204,6 +205,9 @@ async function send(context: RouterContext): Promise<void> {
 
   // Create a list of routes that will be used to match the current path
   try {
+    // Check if file request
+    if (method.toLocaleLowerCase() === "get" && isFileRequest(context.path)) return sendFile(context);
+
     // Check if path exist in visited routes
     let selectedRoute: MayaJsRoute | null = app.router.visitedRoutes?.[path]?.[method] ?? null;
 

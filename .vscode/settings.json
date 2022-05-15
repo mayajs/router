@@ -1,9 +1,10 @@
 {
-    "prettier.trailingComma": "es5",
-    "prettier.printWidth": 160,
-    "git.confirmSync": false,
-    "git.autofetch": true,
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 160,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "conventionalCommits.scopes": ["files"]
 }
